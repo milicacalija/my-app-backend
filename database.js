@@ -1,17 +1,17 @@
 const mysql = require('mysql');
 
-const conn = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
+const db = mysql.createConnection({
+  host: process.env.MYSQLHOST,
+  port: process.env.MYSQLPORT,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE
 });
 
-conn.connect((err) => {
+db.connect((err) => {
   if (err) {
-    console.error('DB connection error:', err);
-    process.exit(1);
+    console.error('Ne mogu da se povežem na bazu:', err);
+    return;
   }
-  console.log('MySQL connected!');
+  console.log('Povezan na bazu!');
 });
