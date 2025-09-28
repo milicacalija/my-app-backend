@@ -13,13 +13,7 @@ app.use((req, res, next) => {
     next();
 });
 
-const conn = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    port: '3306',
-    password: "root123",
-    database: "mi_baza"
-});
+
 
 // Povezivanje na bazu podataka
 conn.connect(function(err) {

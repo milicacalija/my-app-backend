@@ -7,13 +7,14 @@ const router = express.Router();
 
 require("dotenv").config(); //Da bi se PORT prilagodio public reilway
 // Kreiramo pool konekciju (stabilnije za više zahteva)
-const pool = mysql.createPool({
-    connectionLimit: 10,
-    host: 'localhost',
-    user: 'root',          // korisnik MySQL
-    password: 'root123',   // password MySQL
-    database: 'hemikalije_baza'
+const conn = mysql.createConnection({
+  host     : process.env.MYSQL_HOST,
+  user     : process.env.MYSQL_USER,
+  password : process.env.MYSQL_PASSWORD,
+  database : process.env.MYSQL_DATABASE,
+  port     : process.env.MYSQL_PORT
 });
+
 
 // ================== GET: svi bonusi ==================
 router.get('/bonus', (req, res) => {

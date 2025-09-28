@@ -7,13 +7,13 @@ const router = express.Router();
 
 /*zatim treba napraviti konekciju uz pomoc var conn taj sam malo kasnije zapisala, kod var conn imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
 const conn = mysql.createConnection({
-    /*Onda saljemo objekat kao argument*/
-    host: "localhost",
-    user: "root",
-    port:'3306',
-    password:"root123",
-    database: "hemikalije_baza"
+  host     : process.env.MYSQL_HOST,
+  user     : process.env.MYSQL_USER,
+  password : process.env.MYSQL_PASSWORD,
+  database : process.env.MYSQL_DATABASE,
+  port     : process.env.MYSQL_PORT
 });
+
 
 module.exports = conn;
 /*Da bismo napravili konekciju kazemo, ako se desi glupost izbaci gresku, greske mogu biti posledica ako nesto iz podataka kao sto je username, password, schema itd nije tacno uneto, i ako se ne uhvati exception rusi se celo okruzenje servera, to nam je veoma vazno, da ne bi ispalo da server radi a nema nikakvu konekciju sa bazom!*/
