@@ -4,18 +4,6 @@ const express = require("express");
 const router = express.Router();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // 1️⃣ Vraća sve piktograme
 router.get("/piktogrami", (req, res) => {
     const search = req.query.search;

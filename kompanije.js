@@ -1,11 +1,11 @@
-/*Povezivanje NOde sa MySql*, posle toga kazemo db .dbect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console dbected*/
+
 const db = require('./database'); // konekcija iz database.js
 const cors = require('cors');
 
 const express = require("express");
 const router = express.Router();
 
-/*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
+
 
 db.query('SELECT * FROM kompanije', (err, results) => {
   if (err) {
@@ -14,11 +14,10 @@ db.query('SELECT * FROM kompanije', (err, results) => {
   }
   console.log(results);
 });
-/*Da ne bi ispalo da server ne radi nista, ako nam neko dodje na HOME stranu, mi cemo njega da pozdravimo i kazemo HELLO! Ovo je primer najbanalnijeg servera*/
+
 router.get("/",function(req,res){ /*F-je koje imaju zahteve, moraju da imaju HTTP req i HTTP res, to su argumenti u zagradi u f-ji*/
     res.json({message:"Hello"})
 });
-/*Hocu da podatke prikazem sa baze na frontendu, npr tabela kompanije, komuniciramo sa appijem preko GET metode*/
 
 router.get("/", (req,res) => {
     const search = req.query.search;
@@ -77,40 +76,17 @@ router.post("/kompanije", function(req, res){
   );
 });
 
-/*Ovo se sve zovu rest full APIJI,rest full je samo dogovor,to znaci ove putanje koje imamo npr router.get/kompanije, to su imenice i tako nam se zovu apiji, to mogu biti kompanije, proizvodi,studenti, ispiti itd..a onda u zavisnosti od metode zavisi sta radimo  Recimo GET polozeni ispiti verovatno nam vraca poloznene ispite, POST polozeni ispiti pravi neki novi polozeni ispit, PUT ILI PATCH menja neke podatke o poloznemo ispitu I DELETE brise neki polozeni ispit, TO JE SAMO DOGOVOR!*
 
-});
-/*Nakon sto smo ubacili podatke u tabelu kompanije, preko frontenda, sad treba poslati infotmacije backendu to sto smo uneli u input, ovo se inace zovu restfull APPIJI, to znaci da mi pravimo dogovor kakvu zelimo putanju da komunicira sa bazom preko koje metode i sta nam ta metoda vraca, to je ona glavna razlika izmedju GET i POST metode, GET dobijamo podatke a POST pravi podatke, npr PUT metoda mozemo iskoristiti da izmenimo podatke ali msm da u ovom trenutku za moju bazu to nece biti potrebno, mozda cu iskoristiti za proizvode kad budem kreirala prodavnicu, ako mi bude zatrebao taj deo imam na predvanju DATA ACESS /4/4 posle 2.20h, vervatno cu koristiti za tabelu proizvodi!*/
-
-
-
-/*Greska koja se javlja kao kl ne moze  vise poslati zahteva od jednog, to je zato sto imamo negde pogresno zatvorene zagrade u nekim kodovima ili res.json zahtev treba obrisati ako ima bespotrebno previse*/ 
-/* Http request funkcionise tako sto posaljemo zahtev serveru i dobijemo odgovor, zato treba pozvati res json da da odgovor korisniku nakon poslatog zahtev*/
-
-
-
-
-
-
-    
-
-
-  
-
-
-/*Ovaj upitnik i procenat u njemu znaci prepare statement, U srednjoj zagradi saljemo niz stvari koje treba da se zamene i dodamo treci argument, zatim zatvorimo dbection query*/
-
-/*APPI pozovemo za brisnje*/
 
 router.delete("/kompanije", function(req,res){
-    /*Problem sa specifikacijom za DELETE, pa umseto body poslacemo podatke preko URL, tj query*/
+    
 var id= req.query.id;
-/*Imala sam gresku sa upitom u smislu nije hteo da mi obrise zato sto u sintaksi nisam imala zarez na kraju upitnika , kad se obrise komapnija, server tu infromaciju ne komentarise*/
+
 db.query("DELETE FROM kompanije WHERE kmp_id=?",[id],
 function(err,result,fields){
     if(err) throw err;
     res.json({"Result":"OK"});
-    /*Kad budemo radili validaciju, npr ako je result OK refresh usere ako je result error, prikazi msg */
+    
 });
 });
     
