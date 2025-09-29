@@ -16,8 +16,7 @@ const pool = mysql.createPool({
   port: process.env.MYSQLPORT,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  waitForConnections: true,
+  database: process.env.MYSQL_DATABASE, // <— ovde donja crta  waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
