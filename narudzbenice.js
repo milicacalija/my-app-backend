@@ -5,7 +5,7 @@
 //Ne, POST je u potpunosti ispravan za ubacivanje stavki u bazu. Evo zašto:POST se koristi kada pravimo novi resurs na serveru, što je upravo tvoj slučaj:Kreiraš novu narudžbenicu u narudzbenice.Ubacuješ nove stavke u stavke.PUT se obično koristi za izmenu postojećeg resursa:Ako bi menjao već postojeću narudžbenicu ili njene stavke, tada bi PUT bio ispravan.Dakle:POST /narudzbenice → kreira novu narudžbenicu i stavke.PUT /narudzbenice/:id → menja narudžbenicu ili njene podatke.
 
 //Zašto dobijaš CORS Failed,,Ako ti je frontend na http://localhost:3000, to su različiti portovi, pa browser blokira zahtev osim ako server eksplicitno ne dozvoli.Zato axios javlja: "Response body is not available to scripts (Reason: CORS Failed)
-const mysql = require('mysql');
+const db = require('./database'); // konekcija iz database.js
 const moment = require('moment-timezone');
 //Za kreiranje pdf dokumnata putem emaila, ali da ne budu izopacena slova koristi se paket instaliran puppeteer
 const puppeteer = require('puppeteer');

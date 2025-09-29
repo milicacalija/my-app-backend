@@ -2,6 +2,7 @@
 var mysql= require("mysql");
 const express = require("express");
 const router = express.Router();
+const db = require('./database'); // konekcija iz database.js
 
 
 

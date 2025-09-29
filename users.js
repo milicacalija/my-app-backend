@@ -3,6 +3,7 @@ var mysql= require("mysql");
 const express = require("express");
 const router = express.Router();
 const moment = require('moment-timezone'); // za Node.js
+const db = require('./database'); // konekcija iz database.js
 
 
 /*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */

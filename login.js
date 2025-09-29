@@ -1,6 +1,7 @@
 /*Na pocetku mi je izbacivalo gresku cors is not defined, zato sto uopste nisam definisala promenljivu cors, a kad izbaci gresku module not found to znaci da cors paket treba instalirati */
 const cors = require('cors');
 const jwt = require('jsonwebtoken');//Za zastitu, da ne bi bilo ko mogao uci na stranicu admin
+const db = require('./database'); // konekcija iz database.js
 
 const express = require("express");
 const router = express.Router();

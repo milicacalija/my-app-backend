@@ -1,6 +1,6 @@
 // bonus.js
 const express = require('express');
-const mysql = require('mysql'); // koristimo mysql2
+const db = require('./database'); // konekcija iz database.js
 const cors = require('cors');
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-var mysql = require("mysql");
+const db = require('./database'); // konekcija iz database.js
 const cors = require('cors');
 const express = require("express");
 const router = express.Router();

@@ -2,6 +2,8 @@
 var mysql= require("mysql");
 const express = require("express");
 const router = express.Router();
+const db = require('./database'); // konekcija iz database.js
+
 //renutno koristiš mysql.createdbection i onda ga eksportuješ (module.exports = db) i koristiš ga u više ruta (/specifikacije GET, POST, PUT, DELETE).To u startu radi, ali čim ti frontend pošalje više upita skoro u isto vreme, Node koristi istu konekciju za sve, i tada puca sa onom greškom:
 
 /*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
