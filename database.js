@@ -1,4 +1,6 @@
 require('dotenv').config();
+console.log('DB NAME:', process.env.MYSQLDATABASE);
+
 const mysql = require('mysql2');
 
 // Kreiranje pool-a (klasičan callback stil)
