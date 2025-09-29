@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 
 
 // Povezivanje na bazu podataka
-db.dbect(function(err) {
+db.connect(function(err) {
     if (err) {
         console.error('Greška pri povezivanju sa bazom podataka: ' + err.stack);
         return;

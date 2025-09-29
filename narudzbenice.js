@@ -36,7 +36,7 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME
 });
 
-db.dbect((err) => {
+db.connect((err) => {
     if(err) throw err;
     console.log("MySql dbected");
 

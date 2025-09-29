@@ -15,7 +15,7 @@ const db = mysql.createConnection({
 
 module.exports = db;
 /*Da bismo napravili konekciju kazemo, ako se desi glupost izbaci gresku, greske mogu biti posledica ako nesto iz podataka kao sto je username, password, schema itd nije tacno uneto, i ako se ne uhvati exception rusi se celo okruzenje servera, to nam je veoma vazno, da ne bi ispalo da server radi a nema nikakvu konekciju sa bazom!*/
-db.dbect((err) => {
+db.connect((err) => {
     if(err) throw err;
     console.log("MySql dbected");
 

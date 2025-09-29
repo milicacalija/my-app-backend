@@ -16,7 +16,7 @@ const db = mysql.createConnection({
 
 
 
-db.dbect((err) => {
+db.connect((err) => {
     if (err) throw err;
     console.log("MySql dbected");
 });
