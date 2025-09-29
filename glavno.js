@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const cors = require("cors");
 require('dotenv').config(); // ucitava .env
+const db = require('./database'); // putanja do tvog database.js
 
 
 const app = express();
