@@ -3,7 +3,7 @@ require('dotenv').config(); // ovo učitava .env vezano za stripe key
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const db = require('./database.js'); // tvoja konekcija ka bazi
 const router = express.Router();
-
+const logger = require('./logger');
 
 
 // Ruta za kreiranje PaymentIntent i insert u bazu
@@ -45,7 +45,7 @@ db.query(
       [fk_pa_usr_id, fk_pa_nar_id, amount, currency, 'pending', 'card', paymentIntent.id],
       (err, result) => {
         if (err) {
-          console.error('Greška pri ubacivanju u bazu:', err);
+          logger.error('Greška pri ubacivanju u bazu:', err);
           return res.status(500).json({ error: 'Greška pri ubacivanju plaćanja u bazu.' });
         } else {
           return res.json({ clientSecret: paymentIntent.client_secret });
@@ -54,7 +54,7 @@ db.query(
     );
 
   } catch (err) {
-    console.error('Stripe PaymentIntent error:', err);
+    logger.error('Stripe PaymentIntent error:', err);
     return res.status(500).json({ error: err.message });
   }
 });

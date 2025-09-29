@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
-
+const logger = require('./logger');
 
 
 
@@ -12,7 +12,7 @@ router.get("/proizvodi", function(req, res) {
     if (tpr_id === undefined) {
         db.query("SELECT proizvodi.pro_iupac FROM proizvodi JOIN proizvodi_tipoviprimene ON proizvodi.pro_id = proizvodi_tipoviprimene.pro_id", function(err, results, fields) {
             if (err) {
-                console.error(err);
+                logger.error(err);
                 res.status(500).json({ error: 'Database query error' });
                 return;
             }
@@ -21,7 +21,7 @@ router.get("/proizvodi", function(req, res) {
     } else {
         db.query("SELECT proizvodi.pro_iupac FROM proizvodi JOIN proizvodi_tipoviprimene ON proizvodi.pro_id = proizvodi_tipoviprimene.pro_id WHERE proizvodi_tipoviprimene.tpr_id = ?", [tpr_id], function(err, results, fields) {
             if (err) {
-                console.error(err);
+                logger.error(err);
                 res.status(500).json({ error: 'Database query error' });
                 return;
             }
@@ -45,7 +45,7 @@ router.get('/tipoviprimene', function(req, res) {
   
     db.query(query, values, function(err, results) {
       if (err) {
-        console.error(err);
+        logger.error(err);
         return res.status(500).json({ error: 'Database query failed' });
       }
       res.json({ data: results });
@@ -64,7 +64,7 @@ router.post ("/tipoviprimene", function(req,res){
     db.query("INSERT INTO tipoviprimene SET tpr_naziv=?",[naziv], 
     function(err,results,fields) {
         if(err) throw err;
-        console.log(results);
+        logger.log(results);
         /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
         /*res.json ({"Result": "OK"});*/
     }) ;
@@ -90,7 +90,7 @@ router.put("/tipoviprimene", function(req,res){
     db.query("UPDATE tipoviprimene SET tpr_naziv=? WHERE tpr_id=?",[naziv, id], 
 function(err,results,fields) {
     if(err) throw err;
-    console.log(results);
+    logger.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
 });

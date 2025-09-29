@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mysql = require('mysql2');
-
+const logger = require('./logger');
 const pool = mysql.createPool({
   host: process.env.MYSQLHOST,
   port: process.env.MYSQLPORT,
@@ -14,9 +14,9 @@ const pool = mysql.createPool({
 
 pool.getConnection((err, conn) => {
   if (err) {
-    console.error('❌ Greška pri povezivanju sa bazom:', err);
+    logger.error('❌ Greška pri povezivanju sa bazom:', err);
   } else {
-    console.log('✅ Povezan na bazu (pool, callback klijent)!');
+    logger.log('✅ Povezan na bazu (pool, callback klijent)!');
     conn.release();
   }
 });

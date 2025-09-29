@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
-
+const logger = require('./logger');
 
 
 
@@ -44,20 +44,18 @@ router.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
 
-  console.log("Email:", email);
-  console.log("Password:", password);
-
+  
   db.query(
     //Da pri logovanju odmah znamo email i naziv kompanije korisnika, informacije hvatamo u local storage
     "SELECT usr_id, usr_name, usr_email, usr_password, usr_phone, usr_level,  kompanije.kmp_naziv, kompanije.kmp_pib, kompanije.kmp_adresa FROM users LEFT JOIN kompanije ON users.fk_usr_kmp_id = kompanije.kmp_id WHERE usr_email=? AND usr_password=?",
     [email, password],
     (err, rows, fields) => {
       if (err) {
-        console.error('Greška prilikom izvršavanja SQL upita:', err);
+        logger.error('Greška prilikom izvršavanja SQL upita:', err);
         res.status(500).json({"Result": "ERR", "Message": "Internal Server Error"});
         return;
       }
-      console.log('Rows from database:', rows);
+      logger.log('Rows from database:', rows);
 
       if (rows.length === 0) {
         res.status(401).json({"Result": "ERR", "Message": "Invalid credentials"});
@@ -80,7 +78,7 @@ router.post("/login", (req, res) => {
       
 
     res.json({"Result": "OK", "data": user, "token": token});
-      console.log('Login uspešan, token poslat');
+      logger.log('Login uspešan, token poslat');
         
       });
     }

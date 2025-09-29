@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
-
+const logger = require('./logger');
 router.get("/proizvodi/:id", function(req, res) {
   const id = req.params.id;
   const query = `
@@ -57,7 +57,7 @@ db.query(query, ["%" + search + "%", "%" + search + "%"], function (err, results
             
             
 router.post("/proizvodi", function(req, res) {
-  console.log("📥 Request body:", req.body);
+  logger.log("📥 Request body:", req.body);
 
 
   const sql = `
@@ -80,7 +80,7 @@ const values = [
 
 db.query(sql, values, (err, result) => {
   if (err) {
-    console.error("❌ Greška u INSERT upitu:", err);
+    logger.error("❌ Greška u INSERT upitu:", err);
     return res.status(500).json({ error: "Greška pri upisu u bazu" });
   }
   res.json({ message: "Proizvod uspešno dodat", id: result.insertId });
@@ -107,7 +107,7 @@ db.query("UPDATE proizvodi SET  pro_iupac=?, pro_cena=?, pro_kolicina=?, pro_jed
 
 function(err,results,fields) {
     if(err) throw err;
-    console.log(results);
+    logger.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
 }) ;

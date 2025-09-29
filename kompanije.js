@@ -2,15 +2,15 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
-
+const logger = require('./logger');
 
 
 db.query('SELECT * FROM kompanije', (err, results) => {
   if (err) {
-    console.error('Greška pri upitu:', err);
+    logger.error('Greška pri upitu:', err);
     return; // umesto throw, da server ne crash-uje
   }
-  console.log(results);
+  logger.log(results);
 });
 
 router.get("/",function(req,res){ /*F-je koje imaju zahteve, moraju da imaju HTTP req i HTTP res, to su argumenti u zagradi u f-ji*/
@@ -29,7 +29,7 @@ router.get("/", (req,res) => {
 
     db.query(sql, params, (err, results) => {
         if(err) {
-            console.error(err);
+            logger.error(err);
             return res.status(500).json({ error: "Greška pri upitu" });
         }
         res.json({ data: results });
@@ -47,12 +47,7 @@ router.post("/kompanije", function(req, res){
   const email = req.body.kmp_email;
   const osoba = req.body.kmp_osoba;
 
-  console.log("Pib:", pib); 
-  console.log("Naziv:", naziv);
-  console.log("Adresa:", adresa);
-  console.log("Telefon:", telefon);  
-  console.log("Email:", email);
-  console.log("Osoba:", osoba);
+  
 
   // Validacija
   if (!pib || !naziv) {
@@ -64,11 +59,11 @@ router.post("/kompanije", function(req, res){
     [pib, naziv, adresa, telefon, email, osoba], 
     function(err, results) {
       if(err) {
-        console.error(err);
+        logger.error(err);
         return res.status(500).json({ message: "Greška pri upisu kompanije" });
       }
 
-      console.log("Kompanija dodata:", results);
+      logger.log("Kompanija dodata:", results);
       res.json({ message: "Kompanija uspešno dodata!", id: results.insertId });
     }
   );

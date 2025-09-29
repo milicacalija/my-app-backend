@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
 const moment = require('moment-timezone'); // za Node.js
-
+const logger = require('./logger');
 
 
 
@@ -38,8 +38,8 @@ router.get("/admin/users", (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-        results.forEach(r => console.log(r.nar_id, r.nar_cena));
-      console.error("SQL greška:", err);
+        results.forEach(r => logger.log(r.nar_id, r.nar_cena));
+      logger.error("SQL greška:", err);
       return res.status(500).json({ error: err });
     }
 
@@ -130,7 +130,7 @@ router.post ("/users", function(req,res){
     db.query("INSERT INTO users SET usr_name=?, usr_email=?, usr_password=?, usr_phone=?,usr_level=?",[name, email, password, phone, level,], 
     function(err,results,fields) {
         if(err) throw err;
-        console.log(results);
+        logger.log(results);
         
     }) ;
 
@@ -156,7 +156,7 @@ router.put("/users", function(req,res){
 db.query("UPDATE users SET usr_name=?, usr_email=?, usr_password=?, usr_phone=?,usr_level=?, WHERE usr_id=?",[name, email, password, phone, level], 
 function(err,results,fields) {
     if(err) throw err;
-    console.log(results);
+    logger.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
 }) ;

@@ -4,7 +4,7 @@ const session = require('express-session');
 const cors = require("cors");
 require('dotenv').config(); // ucitava .env
 const db = require('./database'); // putanja do tvog database.js
-
+const logger = require('./logger');
 
 const app = express();
 
@@ -55,5 +55,5 @@ app.use("/bonus", bonusRoutes);
 // Start servera
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`✅ Server pokrenut na portu ${PORT}`);
+    logger.log(`✅ Server pokrenut na portu ${PORT}`);
 });

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
-
+const logger = require('./logger');
 
 router.get('/', (req, res) => {
   db.query('SELECT * FROM poruke ORDER BY por_time DESC', (err, rows) => {

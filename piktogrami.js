@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
-
+const logger = require('./logger');
 // 1️⃣ Vraća sve piktograme
 router.get("/piktogrami", (req, res) => {
     const search = req.query.search;
@@ -15,7 +15,7 @@ router.get("/piktogrami", (req, res) => {
 
     db.query(query, params, (err, results) => {
         if (err) {
-            console.error("Greška u SQL upitu:", err);
+            logger.error("Greška u SQL upitu:", err);
             return res.status(500).json({ error: "Greška servera" });
         }
         res.json(results);
@@ -40,7 +40,7 @@ WHERE piktogrami.pkt_id = ?
 
     db.query(query, [pktId], (err, results) => {
         if (err) {
-            console.error("Greška u SQL upitu:", err);
+            logger.error("Greška u SQL upitu:", err);
             return res.status(500).json({ error: "Greška servera" });
         }
         res.json(results);

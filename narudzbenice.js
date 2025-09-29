@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // konekcija iz database.js
+const logger = require('./logger');
 const moment = require('moment-timezone');
 //Za kreiranje pdf dokumnata putem emaila, ali da ne budu izopacena slova koristi se paket instaliran puppeteer
 const puppeteer = require('puppeteer');
@@ -41,7 +42,7 @@ router.get('/narudzbenice', (req, res) => {
     
     db.query(query, (err, results) => {
         if (err) {
-            console.error('Greška prilikom dohvaćanja narudžbenica:', err);
+            logger.error('Greška prilikom dohvaćanja narudžbenica:', err);
             return res.status(500).json({ error: 'Greška prilikom dohvaćanja narudžbenica' });
         }
        // Grupisanje po narudzbenici
@@ -95,7 +96,7 @@ router.get('/narudzbenice/:nar_id', (req, res) => {
 
     db.query(query, [nar_id], (err, results) => {
         if (err) {
-            console.error('Greška prilikom dohvaćanja narudžbenice:', err);
+            logger.error('Greška prilikom dohvaćanja narudžbenice:', err);
             return res.status(500).json({ error: 'Greška prilikom dohvaćanja narudžbenice' });
         }
 
@@ -225,7 +226,7 @@ const browser = await puppeteer.launch({
   await page.pdf({ path: pdfPath, format: 'A4', printBackground: true });
   await browser.close();
 
-  console.log(`✅ PDF kreiran: ${pdfPath}`);
+  logger.log(`✅ PDF kreiran: ${pdfPath}`);
   return pdfPath;
 }
 
@@ -293,7 +294,7 @@ router.post('/narudzbenice', async (req, res) => {
     if (stavke.length > 0) {
       for (const s of stavke) {
         //U terminalu cemo videti ako je stigla stavka super ako nije to znaci da je do frontenda a nee do backenda, tacnije iz frontenda ili iz test JSON-a ne stižu ta polja.
-        console.log("📦 Stigla stavka:", s);
+        logger.log("📦 Stigla stavka:", s);
         const kolicina = Number(s.stv_kolicina) || 0;
         const cena = Number(s.stv_cena) || 0;
         const ukCena = kolicina * cena;
@@ -402,7 +403,7 @@ router.post('/narudzbenice', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('❌ Greška pri dodavanju narudžbenice:', err);
+    logger.error('❌ Greška pri dodavanju narudžbenice:', err);
     res.status(500).json({ error: 'Greška pri dodavanju narudžbenice', details: err.message });
   }
 });
@@ -416,7 +417,7 @@ router.put('/narudzbenice/:id', (req, res) => {
     const query = 'UPDATE narudzbenice SET nar_datum = ?, fk_nar_user_id = ?, fk_nar_kmp_id = ?, nar_cena = ? WHERE nar_id = ?';
     db.query(query, [nar_datum, fk_nar_user_id, fk_nar_kmp_id, nar_cena, id], (err) => {
         if (err) {
-            console.error('Error during UPDATE:', err);
+            logger.error('Error during UPDATE:', err);
             return res.status(500).json({ error: 'Došlo je do greške prilikom ažuriranja narudžbenice.' });
         }
 
@@ -424,7 +425,7 @@ router.put('/narudzbenice/:id', (req, res) => {
         const deleteQuery = 'DELETE FROM narudzbenice_stavke WHERE nar_id = ?';
         db.query(deleteQuery, [id], (err) => {
             if (err) {
-                console.error('Error during DELETE:', err);
+                logger.error('Error during DELETE:', err);
                 return res.status(500).json({ error: 'Došlo je do greške prilikom brisanja stavki.' });
             }
 
@@ -435,7 +436,7 @@ router.put('/narudzbenice/:id', (req, res) => {
 
                 db.query(queryStavke, [values], async (err) => {
                     if (err) {
-                        console.error('Error inserting order items:', err);
+                        logger.error('Error inserting order items:', err);
                         return res.status(500).json({ error: 'Error inserting order items' });
                     }
 
@@ -463,14 +464,14 @@ router.delete("/narudzbenice", function(req, res){
   // 1. Obriši sve stavke narudžbenice
   db.query("DELETE FROM stavke WHERE fk_stv_nar_id = ?", [id], function(err, result){
     if(err) {
-      console.error("Greška pri brisanju stavki:", err);
+      logger.error("Greška pri brisanju stavki:", err);
       return res.status(500).json({ error: "Greška pri brisanju stavki" });
     }
 
     // 2. Obriši samu narudžbenicu
     db.query("DELETE FROM narudzbenice WHERE nar_id = ?", [id], function(err2, result2){
       if(err2) {
-        console.error("Greška pri brisanju narudžbenice:", err2);
+        logger.error("Greška pri brisanju narudžbenice:", err2);
         return res.status(500).json({ error: "Greška pri brisanju narudžbenice" });
       }
 

@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
-
+const logger = require('./logger');
 router.get("/specifikacije", function(req,res){
 
     
@@ -39,7 +39,7 @@ var search = req.query.search;
     db.query("INSERT INTO specifikacije SET spe_izgled=?, spe_klashemikal=?, spe_prvapomoc =?,spe_ruksklad=?",[izgled, klashemikal, prvapomoc, ruksklad],
     function(err,results,fields) {
         if(err) throw err;
-        console.log(results);
+        logger.log(results);
        
     }) ;
 
@@ -65,7 +65,7 @@ router.put("/specifikacije", function(req,res){
 db.query("UPDATE specifikacije SET spe_izgled=?, spe_klashemikal=?, spe_prvapomoc =?,spe_ruksklad=? WHERE spe_id=?",[spe_izgled, spe_klashemikal, spe_prvapomoc, spe_ruksklad,id], 
 function(err,results,fields) {
     if(err) throw err;
-    console.log(results);
+    logger.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
 }) ;
