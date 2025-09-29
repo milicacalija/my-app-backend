@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mysql = require('mysql2');
 
-// Kreiranje pool-a umesto pojedinačne konekcije
+// Kreiranje pool-a (klasičan callback stil)
 const pool = mysql.createPool({
   host: process.env.MYSQLHOST,
   port: process.env.MYSQLPORT,
@@ -9,20 +9,21 @@ const pool = mysql.createPool({
   password: process.env.MYSQLPASSWORD,
   database: process.env.MYSQLDATABASE,
   waitForConnections: true,
-  connectionLimit: 10,  // maksimalno 10 paralelnih konekcija
+  connectionLimit: 10,
   queueLimit: 0
 });
 
-// Da bi koristio async/await
-const db = pool.promise();
-
-db.getConnection()
-  .then(conn => {
-    console.log('✅ Povezan na bazu (pool)!');
-    conn.release(); // oslobodi konekciju
-  })
-  .catch(err => {
+// Test konekcije
+pool.getConnection((err, conn) => {
+  if (err) {
     console.error('❌ Greška pri povezivanju sa bazom:', err);
-  });
+  } else {
+    console.log('✅ Povezan na bazu (pool, callback klijent)!');
+    conn.release();
+  }
+});
 
-module.exports = db;
+module.exports = pool;
+
+
+//Greška ti dolazi zato što tvoj database klijent koristi promise verziju, a ti pokušavaš da pozoveš db.query(sql, callback). To se ne može, jer promise klijent ne prihvata callback funkcije.Dakle, postoje dve opcije, zavisi šta želiš da koristiš:sve sql upite cemo await pozivat
