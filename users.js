@@ -1,8 +1,8 @@
 
-const express = require("express");
+const express = require('express');
 const router = express.Router();
+const db = require('./database'); // import konekcije
 const moment = require('moment-timezone'); // za Node.js
-const db = require('./database'); // konekcija iz database.js
 
 
 

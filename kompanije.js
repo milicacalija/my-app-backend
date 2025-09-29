@@ -1,9 +1,7 @@
 
-const db = require('./database'); // konekcija iz database.js
-const cors = require('cors');
-
-const express = require("express");
+const express = require('express');
 const router = express.Router();
+const db = require('./database'); // import konekcije
 
 
 

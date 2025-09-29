@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./database'); // konekcija iz database.js
+const db = require('./database'); // import konekcije
 
 // Test ruta
 router.get('/', (req, res) => {

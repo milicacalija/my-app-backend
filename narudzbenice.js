@@ -1,4 +1,5 @@
-
+const express = require('express');
+const router = express.Router();
 const db = require('./database'); // konekcija iz database.js
 const moment = require('moment-timezone');
 //Za kreiranje pdf dokumnata putem emaila, ali da ne budu izopacena slova koristi se paket instaliran puppeteer
@@ -10,8 +11,6 @@ const nodemailer = require('nodemailer');
 const cors = require('cors'); // <---- OVO DODAJES
 
 // Inicijalizacija aplikacije
-const express = require("express");
-const router = express.Router();
 
 
 // Dohvatanje svih narudžbenica sa podacima o korisniku
