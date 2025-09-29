@@ -3,6 +3,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('./database'); // import konekcije
 const logger = require('./logger');
+
+app.use(express.json());
+
 router.get("/specifikacije", function(req,res){
 
     

@@ -4,6 +4,7 @@ const db = require('./database'); // konekcija iz database.js
 const cors = require('cors');
 const router = express.Router();
 const logger = require('./logger');
+app.use(express.json());
 
 require("dotenv").config(); //Da bi se PORT prilagodio public reilway
 // Kreiramo pool konekciju (stabilnije za više zahteva)

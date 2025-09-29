@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('./database'); // konekcija iz database.js
 const logger = require('./logger');
+app.use(express.json());
+
 const moment = require('moment-timezone');
 //Za kreiranje pdf dokumnata putem emaila, ali da ne budu izopacena slova koristi se paket instaliran puppeteer
 const puppeteer = require('puppeteer');

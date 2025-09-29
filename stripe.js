@@ -4,6 +4,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const db = require('./database.js'); // tvoja konekcija ka bazi
 const router = express.Router();
 const logger = require('./logger');
+app.use(express.json());
 
 
 // Ruta za kreiranje PaymentIntent i insert u bazu

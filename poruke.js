@@ -3,6 +3,9 @@ const router = express.Router();
 const db = require('./database'); // import konekcije
 const logger = require('./logger');
 
+app.use(express.json());
+
+
 router.get('/', (req, res) => {
   db.query('SELECT * FROM poruke ORDER BY por_time DESC', (err, rows) => {
     if (err) return res.status(500).json({ message: 'Greška pri dohvatanju poruka' });

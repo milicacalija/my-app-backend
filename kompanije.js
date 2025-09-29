@@ -5,18 +5,11 @@ const db = require('./database'); // import konekcije
 const logger = require('./logger');
 
 
-db.query('SELECT * FROM kompanije', (err, results) => {
-  if (err) {
-    logger.error('Greška pri upitu:', err);
-    return; // umesto throw, da server ne crash-uje
-  }
-  logger.log(results);
-});
 
-router.get("/",function(req,res){ /*F-je koje imaju zahteve, moraju da imaju HTTP req i HTTP res, to su argumenti u zagradi u f-ji*/
-    res.json({message:"Hello"})
-});
 
+router.get('/test', (req, res) => {
+    res.send('Kompanije router radi!');
+});
 router.get("/", (req,res) => {
     const search = req.query.search;
     let sql = "SELECT * FROM kompanije";
@@ -35,7 +28,7 @@ router.get("/", (req,res) => {
         res.json({ data: results });
     });
 });
-
+//Nikad ne stavljaj db.query direktno u global scope routera.
 
 
 

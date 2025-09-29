@@ -5,6 +5,7 @@ const db = require('./database'); // import konekcije
 const moment = require('moment-timezone'); // za Node.js
 const logger = require('./logger');
 
+app.use(express.json());
 
 
 

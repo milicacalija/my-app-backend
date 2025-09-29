@@ -7,6 +7,8 @@ const db = require('./database'); // putanja do tvog database.js
 const logger = require('./logger');
 
 const app = express();
+app.use(express.json());
+
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
