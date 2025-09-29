@@ -12,7 +12,6 @@ const router = express.Router();
 // Primena CORS middleware samo na određene rute
 
 
-const db = require('./database');
 
 
 

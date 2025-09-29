@@ -6,7 +6,6 @@ const express = require("express");
 const router = express.Router();
 
 /*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
-const db = require('./database');
 
 db.query('SELECT * FROM kompanije', (err, results) => {
   if (err) {

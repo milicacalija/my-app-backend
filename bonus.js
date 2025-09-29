@@ -7,13 +7,7 @@ const router = express.Router();
 
 require("dotenv").config(); //Da bi se PORT prilagodio public reilway
 // Kreiramo pool konekciju (stabilnije za više zahteva)
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
-});
+
 
 
 
@@ -33,7 +27,7 @@ JOIN narudzbenice n ON b.fk_bns_nar_id = n.nar_id
 ORDER BY b.bns_id;
     `;
 
-    pool.query(query, (err, results) => {
+    db.query(query, (err, results) => {
         if (err) {
             console.error('Greška prilikom GET bonus:', err);
             return res.status(500).json({ error: err });
@@ -57,7 +51,7 @@ router.post('/bonus', (req, res) => {
         VALUES (?, ?, ?, ?)
     `;
 
-    pool.query(
+    db.query(
         query,
         [fk_bns_nar_id, fk_bns_pro_id || null, fk_bns_stv_id || null, bns_popust],
         (err, result) => {
