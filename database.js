@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 require('dotenv').config();
 
+const mysql = require('mysql2');
 // Kreiraj konekciju ka bazi
 const db = mysql.createConnection({
   //Oba se uvode jedan za lokalno drugi za jeavno testiranje
