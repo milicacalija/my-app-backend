@@ -1,6 +1,13 @@
 require('dotenv').config();
 console.log('DB NAME:', process.env.MYSQLDATABASE);
-
+console.log('--- ENV VARIJABLE ---');
+console.log('MYSQLHOST:', process.env.MYSQLHOST);
+console.log('MYSQLPORT:', process.env.MYSQLPORT);
+console.log('MYSQLUSER:', process.env.MYSQLUSER);
+console.log('MYSQLPASSWORD:', process.env.MYSQLPASSWORD ? '✅ set' : '❌ undefined');
+console.log('MYSQLDATABASE:', process.env.MYSQLDATABASE);
+console.log('PORT:', process.env.PORT);
+console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY ? '✅ set' : '❌ undefined');
 const mysql = require('mysql2');
 
 // Kreiranje pool-a (klasičan callback stil)
