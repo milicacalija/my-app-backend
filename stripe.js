@@ -1,5 +1,4 @@
 const express = require('express');
-const db = require('./database'); // import konekcije
 require('dotenv').config(); // ovo učitava .env vezano za stripe key
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const db = require('./database.js'); // tvoja konekcija ka bazi
