@@ -15,13 +15,6 @@ app.use((req, res, next) => {
 
 
 // Povezivanje na bazu podataka
-db.connect(function(err) {
-    if (err) {
-        console.error('Greška pri povezivanju sa bazom podataka: ' + err.stack);
-        return;
-    }
-    console.log('Povezano sa bazom podataka kao ID ' + db.threadId);
-});
 
 // Ruta za dobavljanje podataka iz tabele `pro_odel`
 router.get('/sloboprof', (req, res) => {

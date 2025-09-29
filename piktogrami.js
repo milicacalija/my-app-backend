@@ -10,10 +10,7 @@ const router = express.Router();
 
 
 
-db.connect((err) => {
-    if (err) throw err;
-    console.log("MySql dbected");
-});
+
 
 router.get("/", function (req, res) {
     res.json({ message: "Hello" });

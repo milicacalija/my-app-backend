@@ -30,12 +30,7 @@ const router = express.Router();
 
 
 
-db.connect((err) => {
-    if(err) throw err;
-    console.log("MySql dbected");
 
-
-});
 //Ovo mora biti pre svih ruta (router.post(...) itd).
 
 
