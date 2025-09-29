@@ -7,7 +7,7 @@ const router = express.Router();
 
 require("dotenv").config(); //Da bi se PORT prilagodio public reilway
 // Kreiramo pool konekciju (stabilnije za više zahteva)
-const db = mysql.createdbection({
+const db = mysql.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
