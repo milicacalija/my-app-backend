@@ -20,36 +20,25 @@ router.get("/",function(req,res){ /*F-je koje imaju zahteve, moraju da imaju HTT
 });
 /*Hocu da podatke prikazem sa baze na frontendu, npr tabela kompanije, komuniciramo sa appijem preko GET metode*/
 
-router.get("/kompanije", function(req,res){
+router.get("/", (req,res) => {
+    const search = req.query.search;
+    let sql = "SELECT * FROM kompanije";
+    let params = [];
 
-    /*Sad treba napraviti filter, search bar, npr ako unese korisnik er da mu prikaze sve sto sadrzi er, to se postize putem upita WHERE*/
-var search = req.query.search;
-
-
-    /*Zatim uvodimo prolazimo kroz if naredbu, oznaka!== znaci nije/
-    ali se posle predavac ispravio pa je napisao === da jeste, dakle ako jeste undefined radi normalno, znaci nismo prosledili nikakv search vrati ih sve, */
-if(search === undefined){
-
-    /*Sa bazom pricamo tako sto uzmemo konekcciju koju smo otvorili tako sto kazemo db.query, queri ima minimum 3 argumenta, prvi argument je sql upit koji zelimo da izvrsimo, ako zelimo neke stvari da ubacimo u upit kao promenljive to bi bio drugi argument, posto mi to nemamo odmah prelazimo na treci argument a to je function koji prima 3 stvari,prima gresku ako se desila, rezulatate upita i polja, polja cemo retko koristiti! Query f-ja je asihrona, zato sto prima callback */
-    db.query("SELECT*FROM kompanije", function(err,results,fields){
-
-        /*U pravom zivotu kad budemo radili upite ne smemo bacati error ovako if(err) throw err;zato sto ako se lose iskomunicira sa bazom, ceo server ce se srusiti, sto generalno ne zelimo, zelimo da to nekako vratimo korisniku  a da server nastavi da radi, u ovom trenutku ustedece nam manje zivaca jer samo mi koristimo ovaj server pa mozemo ovako bacati error*/
-
-        if (err) throw err;
-        res.json({"data": results})
-    });
-
-}
-else{/*a ako nije undefined, u uglastoj zagradi saljemo niz stvari koje treba da se zamene, treba da se stavi search na prvom mestu, zatim search na drugom mestu, a ti nam je nasa promenljiva var search, i saljemo treci argument function sa err, results, fields, zatvorimo db.query, Na pocetku preedavac je napravio gresku a toje bilo ummesto or and i prepare statement a to je '%' gde ne trabe i odmah je pukao server i izbacio gresku, sto znaci, posto upitnik zamenjuje onim sto smo poslali, a mi zelimo ono sto on zamenjuje da bude ? prosledjeno (to je ono sto se nalazi u uglastoj zagradi kod search(), onda smo napravili izmenu i napisali kod kako treba?*/
-    db.query("SELECT * FROM kompanije WHERE kmp_naziv LIKE ? OR kmp_osoba LIKE ? ",["%"+search+"%", "%"+search+"%"],function(err,results,fields){
-        if (err) throw err;
-        /*Onda kazemo ako greska baci gresku, ispisi res.json results*/
-        
-         res.json({"data": results});
+    if(search !== undefined) {
+        sql += " WHERE kmp_naziv LIKE ? OR kmp_osoba LIKE ?";
+        params = [`%${search}%`, `%${search}%`];
     }
-    );
-}
+
+    db.query(sql, params, (err, results) => {
+        if(err) {
+            console.error(err);
+            return res.status(500).json({ error: "Greška pri upitu" });
+        }
+        res.json({ data: results });
+    });
 });
+
 
 
 
