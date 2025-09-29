@@ -1,21 +1,28 @@
 require('dotenv').config();
 const mysql = require('mysql2');
 
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+// Kreiranje pool-a umesto pojedinačne konekcije
+const pool = mysql.createPool({
+  host: process.env.MYSQLHOST,
+  port: process.env.MYSQLPORT,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  waitForConnections: true,
+  connectionLimit: 10,  // maksimalno 10 paralelnih konekcija
+  queueLimit: 0
 });
 
-db.connect(err => {
-  if (err) {
-    console.error('❌ Ne mogu da se povežem na bazu:', err);
-    return;
-  }
-  console.log('✅ Povezan na bazu!');
-});
+// Da bi koristio async/await
+const db = pool.promise();
+
+db.getConnection()
+  .then(conn => {
+    console.log('✅ Povezan na bazu (pool)!');
+    conn.release(); // oslobodi konekciju
+  })
+  .catch(err => {
+    console.error('❌ Greška pri povezivanju sa bazom:', err);
+  });
 
 module.exports = db;
-
