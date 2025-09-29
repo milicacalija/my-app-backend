@@ -48,7 +48,6 @@ db.query(
           console.error('Greška pri ubacivanju u bazu:', err);
           return res.status(500).json({ error: 'Greška pri ubacivanju plaćanja u bazu.' });
         } else {
-          console.log('Plaćanje zabeleženo u bazi, id:', result.insertId);
           return res.json({ clientSecret: paymentIntent.client_secret });
         }
       }

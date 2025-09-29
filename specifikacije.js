@@ -34,8 +34,7 @@ var search = req.query.search;
         var klashemikal = req.body.klashemikal;
         var prvapomoc = req.body.prvapomoc;
         var ruksklad = req.body.ruksklad;
-        console.log(izgled, klashemikal, prvapomoc, ruksklad,);
-
++
       
     db.query("INSERT INTO specifikacije SET spe_izgled=?, spe_klashemikal=?, spe_prvapomoc =?,spe_ruksklad=?",[izgled, klashemikal, prvapomoc, ruksklad],
     function(err,results,fields) {

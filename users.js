@@ -125,7 +125,6 @@ router.post ("/users", function(req,res){
     var level=req.body.level;
     
 
-    console.log(name, email, password, phone, level);
 
     
     db.query("INSERT INTO users SET usr_name=?, usr_email=?, usr_password=?, usr_phone=?,usr_level=?",[name, email, password, phone, level,], 

@@ -25,7 +25,6 @@ router.get("/proizvodi", function(req, res) {
                 res.status(500).json({ error: 'Database query error' });
                 return;
             }
-            console.log('Query Results:', results); // Debugging
             res.json({ data: results });
         });
     }
@@ -60,7 +59,6 @@ router.post ("/tipoviprimene", function(req,res){
     /*Sad treba da primimo json, da hvatamo podatke*/
     var naziv = req.body.naziv; /*dakle slacemo zahtev pod imenom pib, pod ne query nego body zahtevom, zato sto post ima body za razliku od geta koji nema, getom mozemo samo slati upite u search baru pod ? dok kod post metode to mozemo preko body*/
 
-    console.log(naziv);
 
     /* Kako uneti stvari u bazu, to ide putem upita insert, u zagradi uglastoj saljemo argumente istim redosledom koji smo u upitu insert stavili*/
     db.query("INSERT INTO tipoviprimene SET tpr_naziv=?",[naziv], 

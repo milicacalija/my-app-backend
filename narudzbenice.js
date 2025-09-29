@@ -115,7 +115,6 @@ router.get('/narudzbenice/:nar_id', (req, res) => {
 
 
 async function generateOrderPDF(orderData, pdfPath) {
-  console.log ("Email poslat", orderData)//da vidimo uopset da li email stize do ove
 
   
   const chemicalLogoPath = path.resolve(__dirname, 'src/assets/chemical.png');
@@ -234,7 +233,6 @@ module.exports = generateOrderPDF;
 
 // 2️⃣ Funkcija za slanje mejla sa PDF-om
 async function sendOrderPDFEmail(toEmail, orderData) {
-  console.log("Email koji pokušavamo da pošaljemo:", orderData.kupac_email);
   const pdfPath = `./narudzbenica_${orderData.nar_id}.pdf`;
   await generateOrderPDF(orderData, pdfPath);
 
@@ -262,7 +260,6 @@ async function sendOrderPDFEmail(toEmail, orderData) {
     ]
   });
 
-  console.log("📨 Mejl sa PDF-om poslat:", nodemailer.getTestMessageUrl(info));
 }
 
 
@@ -316,7 +313,6 @@ router.post('/narudzbenice', async (req, res) => {
           }
          
 
-console.log("📥 Ubacujem stavke za nar_id =", nar_id, "Stavke:", stavke);
           // Insert stavke
           //Backend prima saomo fk_stv_pro_id: 118, uk_stv_cena: null, zato u bazi ne mozemo videti popunjena polja stv cena i uk stv cena kao ni stv kolicina },
           await new Promise((resolve, reject) => {
