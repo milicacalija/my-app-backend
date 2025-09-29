@@ -13,9 +13,7 @@ const db = require('./database'); // konekcija iz database.js
 
 
 /*Da ne bi ispalo da server ne radi nista, ako nam neko dodje na HOME stranu, mi cemo njega da pozdravimo i kazemo HELLO! Ovo je primer najbanalnijeg servera*/
-router.get("/",function(req,res){ /*F-je koje imaju zahteve, moraju da imaju HTTP req i HTTP res, to su argumenti u zagradi u f-ji*/
-    res.json({message:"Hello"})
-});
+
 /*Hocu da podatke prikazem sa baze na frontendu, npr tabela kompanije, komuniciramo sa appijem preko GET metode*/
 
 router.get("/proizvodi", function(req, res) {
