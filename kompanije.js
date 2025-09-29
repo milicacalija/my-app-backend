@@ -1,29 +1,20 @@
-/*Povezivanje NOde sa MySql*, posle toga kazemo conn .connect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console connected*/
+/*Povezivanje NOde sa MySql*, posle toga kazemo db .dbect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console dbected*/
 var mysql= require("mysql");
 const cors = require('cors');
 
 const express = require("express");
 const router = express.Router();
 
-/*zatim treba napraviti konekciju uz pomoc var conn taj sam malo kasnije zapisala, kod var conn imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
-const conn = mysql.createConnection({
-  host     : process.env.MYSQL_HOST,
-  user     : process.env.MYSQL_USER,
-  password : process.env.MYSQL_PASSWORD,
-  database : process.env.MYSQL_DATABASE,
-  port     : process.env.MYSQL_PORT
+/*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
+const db = require('./database');
+
+db.query('SELECT * FROM kompanije', (err, results) => {
+  if (err) {
+    console.error('Greška pri upitu:', err);
+    return; // umesto throw, da server ne crash-uje
+  }
+  console.log(results);
 });
-
-
-/*Da bi povezali vise node js fajlova u jedan i pozvali na server potreban nam je module export i tako zasvaki fajl js navodimo a onda preko require f-je u main js pozivaamo sve fajlove*/
-
-/*Da bismo napravili konekciju kazemo, ako se desi glupost izbaci gresku, greske mogu biti posledica ako nesto iz podataka kao sto je username, password, schema itd nije tacno uneto, i ako se ne uhvati exception rusi se celo okruzenje servera, to nam je veoma vazno, da ne bi ispalo da server radi a nema nikakvu konekciju sa bazom!*/
-conn.connect((err) => {
-    if(err) throw err;
-    console.log("MySql Connected");
-
-});
-
 /*Da ne bi ispalo da server ne radi nista, ako nam neko dodje na HOME stranu, mi cemo njega da pozdravimo i kazemo HELLO! Ovo je primer najbanalnijeg servera*/
 router.get("/",function(req,res){ /*F-je koje imaju zahteve, moraju da imaju HTTP req i HTTP res, to su argumenti u zagradi u f-ji*/
     res.json({message:"Hello"})
@@ -40,8 +31,8 @@ var search = req.query.search;
     ali se posle predavac ispravio pa je napisao === da jeste, dakle ako jeste undefined radi normalno, znaci nismo prosledili nikakv search vrati ih sve, */
 if(search === undefined){
 
-    /*Sa bazom pricamo tako sto uzmemo konekcciju koju smo otvorili tako sto kazemo conn.query, queri ima minimum 3 argumenta, prvi argument je sql upit koji zelimo da izvrsimo, ako zelimo neke stvari da ubacimo u upit kao promenljive to bi bio drugi argument, posto mi to nemamo odmah prelazimo na treci argument a to je function koji prima 3 stvari,prima gresku ako se desila, rezulatate upita i polja, polja cemo retko koristiti! Query f-ja je asihrona, zato sto prima callback */
-    conn.query("SELECT*FROM kompanije", function(err,results,fields){
+    /*Sa bazom pricamo tako sto uzmemo konekcciju koju smo otvorili tako sto kazemo db.query, queri ima minimum 3 argumenta, prvi argument je sql upit koji zelimo da izvrsimo, ako zelimo neke stvari da ubacimo u upit kao promenljive to bi bio drugi argument, posto mi to nemamo odmah prelazimo na treci argument a to je function koji prima 3 stvari,prima gresku ako se desila, rezulatate upita i polja, polja cemo retko koristiti! Query f-ja je asihrona, zato sto prima callback */
+    db.query("SELECT*FROM kompanije", function(err,results,fields){
 
         /*U pravom zivotu kad budemo radili upite ne smemo bacati error ovako if(err) throw err;zato sto ako se lose iskomunicira sa bazom, ceo server ce se srusiti, sto generalno ne zelimo, zelimo da to nekako vratimo korisniku  a da server nastavi da radi, u ovom trenutku ustedece nam manje zivaca jer samo mi koristimo ovaj server pa mozemo ovako bacati error*/
 
@@ -50,8 +41,8 @@ if(search === undefined){
     });
 
 }
-else{/*a ako nije undefined, u uglastoj zagradi saljemo niz stvari koje treba da se zamene, treba da se stavi search na prvom mestu, zatim search na drugom mestu, a ti nam je nasa promenljiva var search, i saljemo treci argument function sa err, results, fields, zatvorimo conn.query, Na pocetku preedavac je napravio gresku a toje bilo ummesto or and i prepare statement a to je '%' gde ne trabe i odmah je pukao server i izbacio gresku, sto znaci, posto upitnik zamenjuje onim sto smo poslali, a mi zelimo ono sto on zamenjuje da bude ? prosledjeno (to je ono sto se nalazi u uglastoj zagradi kod search(), onda smo napravili izmenu i napisali kod kako treba?*/
-    conn.query("SELECT * FROM kompanije WHERE kmp_naziv LIKE ? OR kmp_osoba LIKE ? ",["%"+search+"%", "%"+search+"%"],function(err,results,fields){
+else{/*a ako nije undefined, u uglastoj zagradi saljemo niz stvari koje treba da se zamene, treba da se stavi search na prvom mestu, zatim search na drugom mestu, a ti nam je nasa promenljiva var search, i saljemo treci argument function sa err, results, fields, zatvorimo db.query, Na pocetku preedavac je napravio gresku a toje bilo ummesto or and i prepare statement a to je '%' gde ne trabe i odmah je pukao server i izbacio gresku, sto znaci, posto upitnik zamenjuje onim sto smo poslali, a mi zelimo ono sto on zamenjuje da bude ? prosledjeno (to je ono sto se nalazi u uglastoj zagradi kod search(), onda smo napravili izmenu i napisali kod kako treba?*/
+    db.query("SELECT * FROM kompanije WHERE kmp_naziv LIKE ? OR kmp_osoba LIKE ? ",["%"+search+"%", "%"+search+"%"],function(err,results,fields){
         if (err) throw err;
         /*Onda kazemo ako greska baci gresku, ispisi res.json results*/
         
@@ -83,7 +74,7 @@ router.post("/kompanije", function(req, res){
     return res.status(400).json({ message: "PIB i naziv kompanije su obavezni!" });
   }
 
-  conn.query(
+  db.query(
     "INSERT INTO kompanije SET kmp_pib=?, kmp_naziv=?, kmp_adresa=?, kmp_telefon=?, kmp_email=?, kmp_osoba=?",
     [pib, naziv, adresa, telefon, email, osoba], 
     function(err, results) {
@@ -119,7 +110,7 @@ router.post("/kompanije", function(req, res){
   
 
 
-/*Ovaj upitnik i procenat u njemu znaci prepare statement, U srednjoj zagradi saljemo niz stvari koje treba da se zamene i dodamo treci argument, zatim zatvorimo connection query*/
+/*Ovaj upitnik i procenat u njemu znaci prepare statement, U srednjoj zagradi saljemo niz stvari koje treba da se zamene i dodamo treci argument, zatim zatvorimo dbection query*/
 
 /*APPI pozovemo za brisnje*/
 
@@ -127,7 +118,7 @@ router.delete("/kompanije", function(req,res){
     /*Problem sa specifikacijom za DELETE, pa umseto body poslacemo podatke preko URL, tj query*/
 var id= req.query.id;
 /*Imala sam gresku sa upitom u smislu nije hteo da mi obrise zato sto u sintaksi nisam imala zarez na kraju upitnika , kad se obrise komapnija, server tu infromaciju ne komentarise*/
-conn.query("DELETE FROM kompanije WHERE kmp_id=?",[id],
+db.query("DELETE FROM kompanije WHERE kmp_id=?",[id],
 function(err,result,fields){
     if(err) throw err;
     res.json({"Result":"OK"});

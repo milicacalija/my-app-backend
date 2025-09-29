@@ -16,19 +16,19 @@ app.use((req, res, next) => {
 
 
 // Povezivanje na bazu podataka
-conn.connect(function(err) {
+db.dbect(function(err) {
     if (err) {
         console.error('Greška pri povezivanju sa bazom podataka: ' + err.stack);
         return;
     }
-    console.log('Povezano sa bazom podataka kao ID ' + conn.threadId);
+    console.log('Povezano sa bazom podataka kao ID ' + db.threadId);
 });
 
 // Ruta za dobavljanje podataka iz tabele `pro_odel`
 router.get('/sloboprof', (req, res) => {
     const query = 'SELECT * FROM sloboprof';
 
-    conn.query(query, (error, results) => {
+    db.query(query, (error, results) => {
         if (error) {
             console.error('Greška pri izvršavanju upita: ', error);
             res.status(500).send('Greška pri dobavljanju podataka');

@@ -28,20 +28,17 @@ const router = express.Router();
 
 
 
-const conn = mysql.createConnection({
-    /*Onda saljemo objekat kao argument*/
-    host: "localhost",
-    user: "root",
-    port:'3306',
-    password:"root123",
-    database: "hemikalije_baza"
+const db = mysql.createdbection({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
-module.exports = conn;
 
-
-conn.connect((err) => {
+db.dbect((err) => {
     if(err) throw err;
-    console.log("MySql Connected");
+    console.log("MySql dbected");
 
 
 });
@@ -55,7 +52,7 @@ conn.connect((err) => {
 
 
 
-/*zatim treba napraviti konekciju uz pomoc var conn taj sam malo kasnije zapisala, kod var conn imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
+/*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
 
 /*Da bismo napravili konekciju kazemo, ako se desi glupost izbaci gresku, greske mogu biti posledica ako nesto iz podataka kao sto je username, password, schema itd nije tacno uneto, i ako se ne uhvati exception rusi se celo okruzenje servera, to nam je veoma vazno, da ne bi ispalo da server radi a nema nikakvu konekciju sa bazom!*/
 
@@ -92,7 +89,7 @@ router.get('/narudzbenice', (req, res) => {
   `;
 
     
-    conn.query(query, (err, results) => {
+    db.query(query, (err, results) => {
         if (err) {
             console.error('Greška prilikom dohvaćanja narudžbenica:', err);
             return res.status(500).json({ error: 'Greška prilikom dohvaćanja narudžbenica' });
@@ -146,7 +143,7 @@ router.get('/narudzbenice/:nar_id', (req, res) => {
 
     const query = 'SELECT * FROM narudzbenice WHERE nar_id = ?';
 
-    conn.query(query, [nar_id], (err, results) => {
+    db.query(query, [nar_id], (err, results) => {
         if (err) {
             console.error('Greška prilikom dohvaćanja narudžbenice:', err);
             return res.status(500).json({ error: 'Greška prilikom dohvaćanja narudžbenice' });
@@ -346,7 +343,7 @@ router.post('/narudzbenice', async (req, res) => {
         INSERT INTO narudzbenice (nar_datum, fk_nar_usr_id, nar_cena, nac_plat)
         VALUES (?, ?, ?, ?)
       `;
-      conn.query(sqlNar, [nar_datum, fk_nar_usr_id, nar_cena, nac_plat], (err, result) => {
+      db.query(sqlNar, [nar_datum, fk_nar_usr_id, nar_cena, nac_plat], (err, result) => {
         if (err) return reject(err);
         resolve(result);
       });
@@ -367,7 +364,7 @@ router.post('/narudzbenice', async (req, res) => {
         try {
           // Lager
           const lagerRez = await new Promise((resolve, reject) => {
-            conn.query('SELECT pro_lager FROM proizvodi WHERE pro_id = ?', [s.fk_stv_pro_id], (err, results) => {
+            db.query('SELECT pro_lager FROM proizvodi WHERE pro_id = ?', [s.fk_stv_pro_id], (err, results) => {
               if (err) return reject(err);
               resolve(results[0]);
             });
@@ -390,7 +387,7 @@ console.log("📥 Ubacujem stavke za nar_id =", nar_id, "Stavke:", stavke);
                 stv_kolicina = stv_kolicina + VALUES(stv_kolicina),
                 uk_stv_cena = VALUES(stv_cena) * VALUES(stv_kolicina)
             `;
-            conn.query(sqlStavka, [s.fk_stv_pro_id, nar_id, kolicina, cena, ukCena], (err) => {
+            db.query(sqlStavka, [s.fk_stv_pro_id, nar_id, kolicina, cena, ukCena], (err) => {
               if (err) return reject(err);
               resolve();
             });
@@ -398,7 +395,7 @@ console.log("📥 Ubacujem stavke za nar_id =", nar_id, "Stavke:", stavke);
 
           // Lager update
           await new Promise((resolve, reject) => {
-            conn.query('UPDATE proizvodi SET pro_lager = pro_lager - ? WHERE pro_id = ?', [kolicina, s.fk_stv_pro_id], (err) => {
+            db.query('UPDATE proizvodi SET pro_lager = pro_lager - ? WHERE pro_id = ?', [kolicina, s.fk_stv_pro_id], (err) => {
               if (err) return reject(err);
               resolve();
             });
@@ -418,7 +415,7 @@ console.log("📥 Ubacujem stavke za nar_id =", nar_id, "Stavke:", stavke);
         LEFT JOIN kompanije ON users.fk_usr_kmp_id = kompanije.kmp_id
         WHERE users.usr_id = ?
       `;
-      conn.query(sqlUser, [fk_nar_usr_id], (err, results) => {
+      db.query(sqlUser, [fk_nar_usr_id], (err, results) => {
         if (err || results.length === 0) return reject(err || new Error("Nema korisnika"));
         resolve(results[0]);
       });
@@ -428,7 +425,7 @@ console.log("📥 Ubacujem stavke za nar_id =", nar_id, "Stavke:", stavke);
     const proIds = stavke.map(s => s.fk_stv_pro_id);
     const proRez = await new Promise((resolve, reject) => {
       const sqlPro = `SELECT pro_id, pro_iupac, pro_cena FROM proizvodi WHERE pro_id IN (?)`;
-      conn.query(sqlPro, [proIds], (err, results) => {
+      db.query(sqlPro, [proIds], (err, results) => {
         if (err) return reject(err);
         resolve(results);
       });
@@ -516,7 +513,7 @@ router.put('/narudzbenice/:id', (req, res) => {
 
     // Ažuriranje narudžbenice
     const query = 'UPDATE narudzbenice SET nar_datum = ?, fk_nar_user_id = ?, fk_nar_kmp_id = ?, nar_cena = ? WHERE nar_id = ?';
-    conn.query(query, [nar_datum, fk_nar_user_id, fk_nar_kmp_id, nar_cena, id], (err) => {
+    db.query(query, [nar_datum, fk_nar_user_id, fk_nar_kmp_id, nar_cena, id], (err) => {
         if (err) {
             console.error('Error during UPDATE:', err);
             return res.status(500).json({ error: 'Došlo je do greške prilikom ažuriranja narudžbenice.' });
@@ -524,7 +521,7 @@ router.put('/narudzbenice/:id', (req, res) => {
 
         // Brisanje postojećih stavki
         const deleteQuery = 'DELETE FROM narudzbenice_stavke WHERE nar_id = ?';
-        conn.query(deleteQuery, [id], (err) => {
+        db.query(deleteQuery, [id], (err) => {
             if (err) {
                 console.error('Error during DELETE:', err);
                 return res.status(500).json({ error: 'Došlo je do greške prilikom brisanja stavki.' });
@@ -535,7 +532,7 @@ router.put('/narudzbenice/:id', (req, res) => {
                 const queryStavke = 'INSERT INTO narudzbenice_stavke (nar_id, stv_id, fk_naruid, fk_stavid, narst_kolicina) VALUES ?';
                 const values = stavke.map(stavka => [id, stavka.stv_id, stavka.fk_naruid, stavka.fk_stavid, stavka.narst_kolicina]);
 
-                conn.query(queryStavke, [values], async (err) => {
+                db.query(queryStavke, [values], async (err) => {
                     if (err) {
                         console.error('Error inserting order items:', err);
                         return res.status(500).json({ error: 'Error inserting order items' });
@@ -563,14 +560,14 @@ router.delete("/narudzbenice", function(req, res){
   const id = req.query.id;
 
   // 1. Obriši sve stavke narudžbenice
-  conn.query("DELETE FROM stavke WHERE fk_stv_nar_id = ?", [id], function(err, result){
+  db.query("DELETE FROM stavke WHERE fk_stv_nar_id = ?", [id], function(err, result){
     if(err) {
       console.error("Greška pri brisanju stavki:", err);
       return res.status(500).json({ error: "Greška pri brisanju stavki" });
     }
 
     // 2. Obriši samu narudžbenicu
-    conn.query("DELETE FROM narudzbenice WHERE nar_id = ?", [id], function(err2, result2){
+    db.query("DELETE FROM narudzbenice WHERE nar_id = ?", [id], function(err2, result2){
       if(err2) {
         console.error("Greška pri brisanju narudžbenice:", err2);
         return res.status(500).json({ error: "Greška pri brisanju narudžbenice" });

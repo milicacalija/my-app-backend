@@ -1,23 +1,24 @@
-/*Povezivanje NOde sa MySql*, posle toga kazemo conn .connect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console connected*/
+/*Povezivanje NOde sa MySql*, posle toga kazemo db .dbect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console dbected*/
 var mysql= require("mysql");
 const express = require("express");
 const router = express.Router();
 
 
-/*zatim treba napraviti konekciju uz pomoc var conn taj sam malo kasnije zapisala, kod var conn imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
-const conn = mysql.createConnection({
-  host     : process.env.MYSQL_HOST,
-  user     : process.env.MYSQL_USER,
-  password : process.env.MYSQL_PASSWORD,
-  database : process.env.MYSQL_DATABASE,
-  port     : process.env.MYSQL_PORT
+/*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
+const db = mysql.createdbection({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
-module.exports = conn;
+
+module.exports = db;
 /*Da bismo napravili konekciju kazemo, ako se desi glupost izbaci gresku, greske mogu biti posledica ako nesto iz podataka kao sto je username, password, schema itd nije tacno uneto, i ako se ne uhvati exception rusi se celo okruzenje servera, to nam je veoma vazno, da ne bi ispalo da server radi a nema nikakvu konekciju sa bazom!*/
-conn.connect((err) => {
+db.dbect((err) => {
     if(err) throw err;
-    console.log("MySql Connected");
+    console.log("MySql dbected");
 
 });
 /*Da ne bi ispalo da server ne radi nista, ako nam neko dodje na HOME stranu, mi cemo njega da pozdravimo i kazemo HELLO! Ovo je primer najbanalnijeg servera*/
@@ -34,7 +35,7 @@ router.get("/proizvodi/:id", function(req, res) {
     JOIN specifikacije ON proizvodi.pro_id = specifikacije.fk_spe_pro_id
     WHERE proizvodi.pro_id = ?;
   `;
-  conn.query(query, [id], function(err, results) {
+  db.query(query, [id], function(err, results) {
     if (err) return res.status(500).send(err);
     if (results.length === 0) return res.status(404).send({ message: "Proizvod nije pronađen" });
     res.json(results[0]);
@@ -56,19 +57,19 @@ if (search === undefined) {
         FROM proizvodi
         JOIN specifikacije ON proizvodi.pro_id = specifikacije.fk_spe_pro_id;
     `;
-    conn.query(query, function (err, results) {
+    db.query(query, function (err, results) {
         if (err) throw err;
         res.json({ data: results });
     });
 }
-else{/*a ako nije undefined, u uglastoj zagradi saljemo niz stvari koje treba da se zamene, treba da se stavi search na prvom mestu, zatim search na drugom mestu, a ti nam je nasa promenljiva var search, i saljemo treci argument function sa err, results, fields, zatvorimo conn.query, Na pocetku preedavac je napravio gresku a toje bilo ummesto or and i prepare statement a to je '%' gde ne trabe i odmah je pukao server i izbacio gresku, sto znaci, posto upitnik zamenjuje onim sto smo poslali, a mi zelimo ono sto on zamenjuje da bude ? prosledjeno (to je ono sto se nalazi u uglastoj zagradi kod search(), onda smo napravili izmenu i napisali kod kako treba?*/
+else{/*a ako nije undefined, u uglastoj zagradi saljemo niz stvari koje treba da se zamene, treba da se stavi search na prvom mestu, zatim search na drugom mestu, a ti nam je nasa promenljiva var search, i saljemo treci argument function sa err, results, fields, zatvorimo db.query, Na pocetku preedavac je napravio gresku a toje bilo ummesto or and i prepare statement a to je '%' gde ne trabe i odmah je pukao server i izbacio gresku, sto znaci, posto upitnik zamenjuje onim sto smo poslali, a mi zelimo ono sto on zamenjuje da bude ? prosledjeno (to je ono sto se nalazi u uglastoj zagradi kod search(), onda smo napravili izmenu i napisali kod kako treba?*/
     const query = `
     SELECT proizvodi.*, specifikacije.*
     FROM proizvodi
     JOIN specifikacije ON proizvodi.pro_id = specifikacije.fk_spe_pro_id
     WHERE proizvodi.pro_iupac LIKE ? OR proizvodi.pro_iupac LIKE ?;
 `;
-conn.query(query, ["%" + search + "%", "%" + search + "%"], function (err, results) {
+db.query(query, ["%" + search + "%", "%" + search + "%"], function (err, results) {
     if (err) throw err;
     res.json({ data: results });
 });
@@ -107,7 +108,7 @@ const values = [
   tip
 ];
 
-conn.query(sql, values, (err, result) => {
+db.query(sql, values, (err, result) => {
   if (err) {
     console.error("❌ Greška u INSERT upitu:", err);
     return res.status(500).json({ error: "Greška pri upisu u bazu" });
@@ -122,12 +123,12 @@ conn.query(sql, values, (err, result) => {
 
 /*Greska koja se javlja kao kl ne moze  vise poslati zahteva od jednog, to je zato sto imamo negde pogresno zatvorene zagrade u nekim kodovima ili res.json zahtev treba obrisati ako ima bespotrebno previse*/ 
     /* Http request funkcionise tako sto posaljemo zahtev serveru i dobijemo odgovor, zato treba pozvati res json da da odgovor korisniku nakon poslatog zahtev*/
-   /* res.json ({"Result": "OK"});//ovo je prerano Ti sada vraćaš res.json({"Result":"OK"}) odmah posle conn.query, ali query radi asinhrono.To znači: Express šalje odgovor pre nego što se INSERT završi, i ako još jednom pokušaš poslati res.json iz callback-a → dobićeš grešku Cannot set headers after they are sent.
+   /* res.json ({"Result": "OK"});//ovo je prerano Ti sada vraćaš res.json({"Result":"OK"}) odmah posle db.query, ali query radi asinhrono.To znači: Express šalje odgovor pre nego što se INSERT završi, i ako još jednom pokušaš poslati res.json iz callback-a → dobićeš grešku Cannot set headers after they are sent.
     /*Mi nakon poslatog zahteva post metodom ocekujemo da nam se u terminalu ispisu argumenti//Treba da šalješ odgovor unutra u callbacku, nakon što se query uspešno izvrši:*/
 
 
 
-    /*Sa bazom pricamo tako sto uzmemo konekcciju koju smo otvorili tako sto kazemo conn.query, queri ima minimum 3 argumenta, prvi argument je sql upit koji zelimo da izvrsimo, ako zelimo neke stvari da ubacimo u upit kao promenljive to bi bio drugi argument, posto mi to nemamo odmah prelazimo na treci argument a to je function koji prima 3 stvari,prima gresku ako se desila, rezulatate upita i polja, polja cemo retko koristiti! Query f-ja je asihrona, zato sto prima callback */
+    /*Sa bazom pricamo tako sto uzmemo konekcciju koju smo otvorili tako sto kazemo db.query, queri ima minimum 3 argumenta, prvi argument je sql upit koji zelimo da izvrsimo, ako zelimo neke stvari da ubacimo u upit kao promenljive to bi bio drugi argument, posto mi to nemamo odmah prelazimo na treci argument a to je function koji prima 3 stvari,prima gresku ako se desila, rezulatate upita i polja, polja cemo retko koristiti! Query f-ja je asihrona, zato sto prima callback */
   
 /*U pravom zivotu kad budemo radili upite ne smemo bacati error ovako if(err) throw err;zato sto ako se lose iskomunicira sa bazom, ceo server ce se srusiti, sto generalno ne zelimo, zelimo da to nekako vratimo korisniku  a da server nastavi da radi, u ovom trenutku ustedece nam manje zivaca jer samo mi koristimo ovaj server pa mozemo ovako bacati error*/
 
@@ -135,7 +136,7 @@ conn.query(sql, values, (err, result) => {
 
 
 
-/*Ovaj upitnik i procenat u njemu znaci prepare statement, U srednjoj zagradi saljemo niz stvari koje treba da se zamene i dodamo treci argument, zatim zatvorimo connection query*/
+/*Ovaj upitnik i procenat u njemu znaci prepare statement, U srednjoj zagradi saljemo niz stvari koje treba da se zamene i dodamo treci argument, zatim zatvorimo dbection query*/
    
     
 /*Ako zelimo da izmenimo podatke u bazi, bice i toga onda treba da ubacimo novu metodu i po dogovoru neka to bude put metoda*/
@@ -153,9 +154,9 @@ var rok = req.body.rok;
 var lager = req.body.lager;
 var tip = req.body.tip;
 
-/*Jedina razlika je u connquery koji ce imati drugaciji upit, UMESTO INSERT UPDATE i JAKO JE VAZNO DA KAZEMO WHERE U UPITU, JER AKO NE STAVIMO, AUTOMATSKI CEMO SVE PODATKE IZ BAZE IZGUBITI, ODN SVI CE IMATI ISTI PODATAK, Dakle mnogo je vazno za DELETE I UPDATE staviti u upitu WHERE*/
+/*Jedina razlika je u dbquery koji ce imati drugaciji upit, UMESTO INSERT UPDATE i JAKO JE VAZNO DA KAZEMO WHERE U UPITU, JER AKO NE STAVIMO, AUTOMATSKI CEMO SVE PODATKE IZ BAZE IZGUBITI, ODN SVI CE IMATI ISTI PODATAK, Dakle mnogo je vazno za DELETE I UPDATE staviti u upitu WHERE*/
 
-conn.query("UPDATE proizvodi SET  pro_iupac=?, pro_cena=?, pro_kolicina=?, pro_jedinicamere=?, pro_rok=?, pro_lager=? tip_hemikalije=? WHERE pro_id=?", [naziv, iupac, cena, kolicina, jedinicamere, rok, lager, tip, id], 
+db.query("UPDATE proizvodi SET  pro_iupac=?, pro_cena=?, pro_kolicina=?, pro_jedinicamere=?, pro_rok=?, pro_lager=? tip_hemikalije=? WHERE pro_id=?", [naziv, iupac, cena, kolicina, jedinicamere, rok, lager, tip, id], 
 
 function(err,results,fields) {
     if(err) throw err;
@@ -176,7 +177,7 @@ router.delete("/proizvodi", function(req,res){
     /*Problem sa specifikacijom za DELETE, pa umseto body poslacemo podatke preko URL, tj query*/
 var id= req.query.id;
 /*Imala sam gresku sa upitom u smislu nije hteo da mi obrise zato sto u sintaksi nisam imala zarez na kraju upitnika , kad se obrise komapnija, server tu infromaciju ne komentarise*/
-conn.query("DELETE FROM proizvodi WHERE pro_id=?",[id],
+db.query("DELETE FROM proizvodi WHERE pro_id=?",[id],
 function(err,result,fields){
     if(err) throw err;
     res.json({"Result":"OK"});

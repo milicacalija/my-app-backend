@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const conn = require('./database'); // import konekcije
+const db = require('./database'); // import konekcije
 
 
 router.get('/', (req, res) => {
-  conn.query('SELECT * FROM poruke ORDER BY por_time DESC', (err, rows) => {
+  db.query('SELECT * FROM poruke ORDER BY por_time DESC', (err, rows) => {
     if (err) return res.status(500).json({ message: 'Greška pri dohvatanju poruka' });
     res.json(rows);
   });
@@ -25,7 +25,7 @@ router.post('/', (req, res) => {
     VALUES (?, ?, ?, ?, NOW(), ?)
   `;
 
-  conn.query(
+  db.query(
     query,
     [
       fk_user_sender || null,   // ID korisnika ili NULL
@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
 });
 // 🔹 Dohvatanje svih poruka
 router.get('/all', (req, res) => {
-  conn.query('SELECT * FROM poruke ORDER BY por_time DESC', (err, rows) => {
+  db.query('SELECT * FROM poruke ORDER BY por_time DESC', (err, rows) => {
     if (err) return res.status(500).json({ message: 'Greška pri dohvatanju poruka' });
     res.json(rows);
   });
@@ -55,7 +55,7 @@ router.put('/:id/status', (req, res) => {
 
   if (!status) return res.status(400).json({ message: 'Status je obavezan' });
 
-  conn.query('UPDATE poruke SET status=? WHERE por_id=?', [status, por_id], (err) => {
+  db.query('UPDATE poruke SET status=? WHERE por_id=?', [status, por_id], (err) => {
     if (err) return res.status(500).json({ message: 'Greška pri ažuriranju statusa' });
     res.json({ message: 'Status uspešno promenjen' });
   });

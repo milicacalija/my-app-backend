@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const conn = require('./database'); // konekcija iz database.js
+const db = require('./database'); // konekcija iz database.js
 
 // Test ruta
 router.get('/', (req, res) => {
@@ -19,7 +19,7 @@ router.post('/register', (req, res) => {
    const usr_level = 1; // običan korisnik // običan korisnik uvek dobija level 1, svako ko se registruje naknadno je obican korsinik
 
   // Provera da li već postoji email
-  conn.query('SELECT * FROM users WHERE usr_email = ?', [usr_email], (err, rows) => {
+  db.query('SELECT * FROM users WHERE usr_email = ?', [usr_email], (err, rows) => {
     if (err) return res.status(500).json({ message: 'Greška na serveru' });
     if (rows.length > 0) return res.status(400).json({ message: 'Email je već registrovan' });
    
@@ -30,7 +30,7 @@ router.post('/register', (req, res) => {
       (usr_name, usr_email, usr_password, usr_phone, usr_level, fk_usr_kmp_id)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-    conn.query(
+    db.query(
       //fk_nar_id nije definisana nigde u kodu → greška. Zato smo stavili NULL, jer prilikom registracije korisnika ne unosimo narudzbenicu, to ce se kasnije dodeljivati
       query,
       [usr_name, usr_email, usr_password, usr_phone, usr_level, fk_usr_kmp_id ],
@@ -47,7 +47,7 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
   const { usr_email, usr_password } = req.body;
 
-  conn.query(
+  db.query(
     'SELECT * FROM users WHERE usr_email = ? AND usr_password = ?',
     [usr_email, usr_password],
     (err, rows) => {

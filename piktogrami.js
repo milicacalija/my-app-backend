@@ -6,18 +6,19 @@ const router = express.Router();
 
 
 
-const conn = mysql.createConnection({
-  host     : process.env.MYSQL_HOST,
-  user     : process.env.MYSQL_USER,
-  password : process.env.MYSQL_PASSWORD,
-  database : process.env.MYSQL_DATABASE,
-  port     : process.env.MYSQL_PORT
+const db = mysql.createdbection({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
 
-conn.connect((err) => {
+
+db.dbect((err) => {
     if (err) throw err;
-    console.log("MySql Connected");
+    console.log("MySql dbected");
 });
 
 router.get("/", function (req, res) {
@@ -37,7 +38,7 @@ router.get("/piktogrami", (req, res) => {
         params.push("%" + search + "%");
     }
 
-    conn.query(query, params, (err, results) => {
+    db.query(query, params, (err, results) => {
         if (err) {
             console.error("Greška u SQL upitu:", err);
             return res.status(500).json({ error: "Greška servera" });
@@ -62,7 +63,7 @@ JOIN piktogrami ON piktogrami.pkt_id = piktogrami_proizvodi.pkt_id
 WHERE piktogrami.pkt_id = ?
     `;
 
-    conn.query(query, [pktId], (err, results) => {
+    db.query(query, [pktId], (err, results) => {
         if (err) {
             console.error("Greška u SQL upitu:", err);
             return res.status(500).json({ error: "Greška servera" });

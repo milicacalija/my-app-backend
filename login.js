@@ -1,4 +1,3 @@
-let mysql = require("mysql");
 /*Na pocetku mi je izbacivalo gresku cors is not defined, zato sto uopste nisam definisala promenljivu cors, a kad izbaci gresku module not found to znaci da cors paket treba instalirati */
 const cors = require('cors');
 const jwt = require('jsonwebtoken');//Za zastitu, da ne bi bilo ko mogao uci na stranicu admin
@@ -12,18 +11,9 @@ const router = express.Router();
 // Primena CORS middleware samo na određene rute
 
 
-const conn = mysql.createConnection({
-  host     : process.env.MYSQL_HOST,
-  user     : process.env.MYSQL_USER,
-  password : process.env.MYSQL_PASSWORD,
-  database : process.env.MYSQL_DATABASE,
-  port     : process.env.MYSQL_PORT
-});
+const db = require('./database');
 
-conn.connect(function() {
-  
-  console.log('MySql connected !');
-});
+
 
 // Middleware za admin
 // ========================
@@ -60,7 +50,7 @@ router.post("/login", (req, res) => {
   console.log("Email:", email);
   console.log("Password:", password);
 
-  conn.query(
+  db.query(
     //Da pri logovanju odmah znamo email i naziv kompanije korisnika, informacije hvatamo u local storage
     "SELECT usr_id, usr_name, usr_email, usr_password, usr_phone, usr_level,  kompanije.kmp_naziv, kompanije.kmp_pib, kompanije.kmp_adresa FROM users LEFT JOIN kompanije ON users.fk_usr_kmp_id = kompanije.kmp_id WHERE usr_email=? AND usr_password=?",
     [email, password],
@@ -101,7 +91,7 @@ router.post("/login", (req, res) => {
   // Zaštićena admin ruta primer
 // ========================
 router.get("/admin/users", adminAuth, (req, res) => {
-  conn.query("SELECT * FROM users", (err, rows) => {
+  db.query("SELECT * FROM users", (err, rows) => {
     if (err) return res.status(500).json({ error: err });
     res.json(rows);
   });

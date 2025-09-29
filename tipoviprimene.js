@@ -1,25 +1,26 @@
-/*Povezivanje NOde sa MySql*, posle toga kazemo conn .connect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console connected*/
+/*Povezivanje NOde sa MySql*, posle toga kazemo db .dbect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console dbected*/
 var mysql= require("mysql");
 const express = require("express");
 const router = express.Router();
-;
 
 
-/*zatim treba napraviti konekciju uz pomoc var conn taj sam malo kasnije zapisala, kod var conn imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
-const conn = mysql.createConnection({
-  host     : process.env.MYSQL_HOST,
-  user     : process.env.MYSQL_USER,
-  password : process.env.MYSQL_PASSWORD,
-  database : process.env.MYSQL_DATABASE,
-  port     : process.env.MYSQL_PORT
+
+/*zatim treba napraviti konekciju uz pomoc var db taj sam malo kasnije zapisala, kod var db imamo host to je lokalhot, user, to je kod nas rooter, password koji koristim za mysql, database je naziv seme koju zelim da povezem */
+const db = mysql.createdbection({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
 
-module.exports = conn;
+
+module.exports = db;
 /*Da bismo napravili konekciju kazemo, ako se desi glupost izbaci gresku, greske mogu biti posledica ako nesto iz podataka kao sto je username, password, schema itd nije tacno uneto, i ako se ne uhvati exception rusi se celo okruzenje servera, to nam je veoma vazno, da ne bi ispalo da server radi a nema nikakvu konekciju sa bazom!*/
-conn.connect((err) => {
+db.dbect((err) => {
     if(err) throw err;
-    console.log("MySql Connected");
+    console.log("MySql dbected");
 
 });
 /*Da ne bi ispalo da server ne radi nista, ako nam neko dodje na HOME stranu, mi cemo njega da pozdravimo i kazemo HELLO! Ovo je primer najbanalnijeg servera*/
@@ -32,7 +33,7 @@ router.get("/proizvodi", function(req, res) {
     var tpr_id = req.query.tpr_id;
 
     if (tpr_id === undefined) {
-        conn.query("SELECT proizvodi.pro_iupac FROM proizvodi JOIN proizvodi_tipoviprimene ON proizvodi.pro_id = proizvodi_tipoviprimene.pro_id", function(err, results, fields) {
+        db.query("SELECT proizvodi.pro_iupac FROM proizvodi JOIN proizvodi_tipoviprimene ON proizvodi.pro_id = proizvodi_tipoviprimene.pro_id", function(err, results, fields) {
             if (err) {
                 console.error(err);
                 res.status(500).json({ error: 'Database query error' });
@@ -41,7 +42,7 @@ router.get("/proizvodi", function(req, res) {
             res.json({ data: results });
         });
     } else {
-        conn.query("SELECT proizvodi.pro_iupac FROM proizvodi JOIN proizvodi_tipoviprimene ON proizvodi.pro_id = proizvodi_tipoviprimene.pro_id WHERE proizvodi_tipoviprimene.tpr_id = ?", [tpr_id], function(err, results, fields) {
+        db.query("SELECT proizvodi.pro_iupac FROM proizvodi JOIN proizvodi_tipoviprimene ON proizvodi.pro_id = proizvodi_tipoviprimene.pro_id WHERE proizvodi_tipoviprimene.tpr_id = ?", [tpr_id], function(err, results, fields) {
             if (err) {
                 console.error(err);
                 res.status(500).json({ error: 'Database query error' });
@@ -66,7 +67,7 @@ router.get('/tipoviprimene', function(req, res) {
     `;
     const values = [`%${search}%`, `%${search}%`, `%${search}%`];
   
-    conn.query(query, values, function(err, results) {
+    db.query(query, values, function(err, results) {
       if (err) {
         console.error(err);
         return res.status(500).json({ error: 'Database query failed' });
@@ -85,7 +86,7 @@ router.post ("/tipoviprimene", function(req,res){
     console.log(naziv);
 
     /* Kako uneti stvari u bazu, to ide putem upita insert, u zagradi uglastoj saljemo argumente istim redosledom koji smo u upitu insert stavili*/
-    conn.query("INSERT INTO tipoviprimene SET tpr_naziv=?",[naziv], 
+    db.query("INSERT INTO tipoviprimene SET tpr_naziv=?",[naziv], 
     function(err,results,fields) {
         if(err) throw err;
         console.log(results);
@@ -109,9 +110,9 @@ router.put("/tipoviprimene", function(req,res){
   
     var naziv = req.body.naziv;
 
-    /*Jedina razlika je u connquery koji ce imati drugaciji upit, UMESTO INSERT UPDATE i JAKO JE VAZNO DA KAZEMO WHERE U UPITU, JER AKO NE STAVIMO, AUTOMATSKI CEMO SVE PODATKE IZ BAZE IZGUBITI, ODN SVI CE IMATI ISTI PODATAK, Dakle mnogo je vazno za DELETE I UPDATE staviti u upitu WHERE*/
+    /*Jedina razlika je u dbquery koji ce imati drugaciji upit, UMESTO INSERT UPDATE i JAKO JE VAZNO DA KAZEMO WHERE U UPITU, JER AKO NE STAVIMO, AUTOMATSKI CEMO SVE PODATKE IZ BAZE IZGUBITI, ODN SVI CE IMATI ISTI PODATAK, Dakle mnogo je vazno za DELETE I UPDATE staviti u upitu WHERE*/
 
-    conn.query("UPDATE tipoviprimene SET tpr_naziv=? WHERE tpr_id=?",[naziv, id], 
+    db.query("UPDATE tipoviprimene SET tpr_naziv=? WHERE tpr_id=?",[naziv, id], 
 function(err,results,fields) {
     if(err) throw err;
     console.log(results);
@@ -131,7 +132,7 @@ var id= req.query.id;
 /*Imala sam gresku sa upitom u smislu nije hteo da mi obrise zato sto u sintaksi nisam imala zarez na kraju upitnika , kad se obrise komapnija, server tu infromaciju ne komentarise*/
 
 
-conn.query("DELETE FROM tipoviprimene WHERE tpr_id=?",[id],
+db.query("DELETE FROM tipoviprimene WHERE tpr_id=?",[id],
 function(err,result,fields){
     if(err) throw err;
     res.json({"Result":"OK"});
