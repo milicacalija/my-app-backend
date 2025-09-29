@@ -10,6 +10,8 @@ const db = mysql.createConnection({
   password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD,
   database: process.env.DB_NAME || process.env.MYSQLDATABASE
 });
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER);
 
 // Povezivanje
 db.connect((err) => {
