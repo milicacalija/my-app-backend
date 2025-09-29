@@ -1,5 +1,4 @@
 /*Povezivanje NOde sa MySql*, posle toga kazemo db .dbect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console dbected*/
-var mysql= require("mysql");
 const express = require("express");
 const router = express.Router();
 const db = require('./database'); // konekcija iz database.js
