@@ -32,7 +32,7 @@ router.get("/", (req,res) => {
 
 
 
-router.post("/kompanije", function(req, res){
+router.post("/", function(req, res){
   const pib = req.body.kmp_pib;
   const naziv = req.body.kmp_naziv;
   const adresa = req.body.kmp_adresa;
@@ -64,7 +64,7 @@ router.post("/kompanije", function(req, res){
 
 
 
-router.delete("/kompanije", function(req,res){
+router.delete("/", function(req,res){
     
 var id= req.query.id;
 

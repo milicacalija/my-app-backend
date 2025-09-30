@@ -5,7 +5,7 @@ const db = require('./database'); // import konekcije
 const logger = require('./logger');
 
 
-router.get("/proizvodi/:id", function(req, res) {
+router.get("/:id", function(req, res) {
   const id = req.params.id;
   const query = `
     SELECT proizvodi.*, specifikacije.*
@@ -22,7 +22,7 @@ router.get("/proizvodi/:id", function(req, res) {
 
 
 
-router.get("/proizvodi", function(req,res){
+router.get("/", function(req,res){
      /*Sad treba napraviti filter, search bar, npr ako unese korisnik er da mu prikaze sve sto sadrzi er, to se postize putem upita WHERE*/
 var search = req.query.search;
 
@@ -35,7 +35,11 @@ if (search === undefined) {
         JOIN specifikacije ON proizvodi.pro_id = specifikacije.fk_spe_pro_id;
     `;
     db.query(query, function (err, results) {
-        if (err) throw err;
+        if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
         res.json({ data: results });
     });
 }
@@ -58,7 +62,7 @@ db.query(query, ["%" + search + "%", "%" + search + "%"], function (err, results
        
             
             
-router.post("/proizvodi", function(req, res) {
+router.post("/", function(req, res) {
   logger.log("📥 Request body:", req.body);
 
 
@@ -91,7 +95,7 @@ db.query(sql, values, (err, result) => {
 
                 
 
-router.put("/proizvodi", function(req,res){
+router.put("/", function(req,res){
     /*Da bi mogli uspesno da izmeni podatak, treba nam id, da znamo koga menjamo i od toga pocinjemo*/
     var id = req.body.id;
     /*Prekopiramo sve prethodne zahteve*/
@@ -105,28 +109,33 @@ var lager = req.body.lager;
 var tip = req.body.tip;
 
 
-db.query("UPDATE proizvodi SET  pro_iupac=?, pro_cena=?, pro_kolicina=?, pro_jedinicamere=?, pro_rok=?, pro_lager=? tip_hemikalije=? WHERE pro_id=?", [naziv, iupac, cena, kolicina, jedinicamere, rok, lager, tip, id], 
-
-function(err,results,fields) {
-    if(err) throw err;
+db.query(
+  "UPDATE proizvodi SET pro_iupac=?, pro_cena=?, pro_kolicina=?, pro_jedinicamere=?, pro_rok=?, pro_lager=?, tip_hemikalije=? WHERE pro_id=?",
+  [iupac, cena, kolicina, jedinicamere, rok, lager, tip, id],
+  function(err, results) {
+    if (err) {
+      logger.error(err);
+      return res.status(500).json({ error: "Greška pri upitu" });
+    }
     logger.log(results);
-    /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
-    res.json ({"Result": "OK"});
-}) ;
-
-
+    res.json({ "Result": "OK" });
+  }
+);
 
 
 });
 /*APPI pozovemo za brisnje*/
 
-router.delete("/proizvodi", function(req,res){
+router.delete("/", function(req,res){
     /*Problem sa specifikacijom za DELETE, pa umseto body poslacemo podatke preko URL, tj query*/
 var id= req.query.id;
 
 db.query("DELETE FROM proizvodi WHERE pro_id=?",[id],
 function(err,result,fields){
-    if(err) throw err;
+    if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
     res.json({"Result":"OK"});
     /*Kad budemo radili validaciju, npr ako je result OK refresh usere ako je result error, prikazi msg */
 });
