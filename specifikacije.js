@@ -5,7 +5,7 @@ const db = require('./database'); // import konekcije
 const logger = require('./logger');
 
 
-router.get("/specifikacije", function(req,res){
+router.get("/", function(req,res){
 
     
 var search = req.query.search;
@@ -21,7 +21,11 @@ var search = req.query.search;
     }
     else{
         db.query("SELECT * FROM specifikacije WHERE spe_ izgled LIKE ? OR spe_klashemikal LIKE ? ",["%"+search+"%", "%"+search+"%"],function(err,results,fields){
-            if (err) throw err;
+            if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
             /*Onda kazemo ako greska baci gresku, ispisi res.json results*/
             
              res.json({"data": results});
@@ -30,7 +34,7 @@ var search = req.query.search;
     }
     });
 
-    router.post ("/specifikacije", function(req,res){
+    router.post ("/", function(req,res){
         /*Sad treba da primimo json, da hvatamo podatke*/
         var izgled = req.body.izgled; 
         var klashemikal = req.body.klashemikal;
@@ -40,7 +44,11 @@ var search = req.query.search;
       
     db.query("INSERT INTO specifikacije SET spe_izgled=?, spe_klashemikal=?, spe_prvapomoc =?,spe_ruksklad=?",[izgled, klashemikal, prvapomoc, ruksklad],
     function(err,results,fields) {
-        if(err) throw err;
+        if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
         logger.log(results);
        
     }) ;
@@ -52,7 +60,7 @@ var search = req.query.search;
  
  /*Napravicemo jednu metodu za izmenu podataka iz baze na frontendu, metoda put*/
 
-router.put("/specifikacije", function(req,res){
+router.put("/", function(req,res){
     /*Da bi mogli uspesno da izmeni podatak, treba nam id, da znamo koga menjamo i od toga pocinjemo*/
     var id = req.body.id;
     /*Prekopiramo sve prethodne zahteve*/
@@ -66,7 +74,13 @@ router.put("/specifikacije", function(req,res){
 
 db.query("UPDATE specifikacije SET spe_izgled=?, spe_klashemikal=?, spe_prvapomoc =?,spe_ruksklad=? WHERE spe_id=?",[spe_izgled, spe_klashemikal, spe_prvapomoc, spe_ruksklad,id], 
 function(err,results,fields) {
-    if(err) throw err;
+    //if err throw err moze srusiti ceo sistem, umesto toga ide
+   if (err) {
+
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
     logger.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
@@ -76,13 +90,17 @@ function(err,results,fields) {
 
 /*APPI pozovemo za brisnje*/
 
-router.delete("/specifikacije", function(req,res){
+router.delete("/", function(req,res){
     /*Problem sa specifikacijom za DELETE, pa umseto body poslacemo podatke preko URL, tj query*/
 var id= req.query.id;
 
 db.query("DELETE FROM specifikacije WHERE spe_id=?",[id],
 function(err,result,fields){
-    if(err) throw err;
+    if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
     res.json({"Result":"OK"});
     /*Kad budemo radili validaciju, npr ako je result OK refresh usere ako je result error, prikazi msg */
 });

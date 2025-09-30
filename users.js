@@ -13,7 +13,7 @@ router.get("/",function(req,res){ /*F-je koje imaju zahteve, moraju da imaju HTT
     res.json({message:"Hello"})
 });
 
-router.get("/admin/users", (req, res) => {
+router.get("/admin/", (req, res) => {
   const query = `
    SELECT 
       users.usr_id,
@@ -88,7 +88,7 @@ router.get("/admin/users", (req, res) => {
    
   });
 });
-router.get("/users", function(req,res){
+router.get("/", function(req,res){
 
    
 var search = req.query.search;
@@ -98,14 +98,20 @@ var search = req.query.search;
 if(search === undefined){
 
     db.query("SELECT*FROM users", function(err,results,fields){
-        if (err) throw err;
+if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
         res.json({"data": results})
     });
 
 }
 else{
     db.query("SELECT * FROM users WHERE usr_email LIKE ? OR usr_password LIKE ? ",["%"+search+"%", "%"+search+"%"],function(err,results,fields){
-        if (err) throw err;
+if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
         /*Onda kazemo ako greska baci gresku, ispisi res.json results*/
         
          res.json({"data": results});
@@ -114,7 +120,7 @@ else{
 }
 });
 
-router.post ("/users", function(req,res){
+router.post ("/", function(req,res){
     /*Sad treba da primimo json, da hvatamo podatke*/
     var id = req.body.id;
     var name=req.body.name; 
@@ -129,7 +135,11 @@ router.post ("/users", function(req,res){
     
     db.query("INSERT INTO users SET usr_name=?, usr_email=?, usr_password=?, usr_phone=?,usr_level=?",[name, email, password, phone, level,], 
     function(err,results,fields) {
-        if(err) throw err;
+       if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
         logger.log(results);
         
     }) ;
@@ -140,7 +150,7 @@ router.post ("/users", function(req,res){
 });
 
 
-router.put("/users", function(req,res){
+router.put("/", function(req,res){
     /*Da bi mogli uspesno da izmeni podatak, treba nam id, da znamo koga menjamo i od toga pocinjemo*/
     var id = req.body.id;
     /*Prekopiramo sve prethodne zahteve*/
@@ -155,7 +165,11 @@ router.put("/users", function(req,res){
 
 db.query("UPDATE users SET usr_name=?, usr_email=?, usr_password=?, usr_phone=?,usr_level=?, WHERE usr_id=?",[name, email, password, phone, level], 
 function(err,results,fields) {
-    if(err) throw err;
+    if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
     logger.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
@@ -164,13 +178,17 @@ function(err,results,fields) {
 });
 
 
-router.delete("/users", function(req,res){
+router.delete("/", function(req,res){
     /*Problem sa specifikacijom za DELETE, pa umseto body poslacemo podatke preko URL, tj query*/
 var id= req.query.id;
 
 db.query("DELETE FROM users WHERE usr_id=?",[id],
 function(err,result, fields){
-    if(err) throw err;
+   if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
     res.json({"Result":"OK"});
     
 });

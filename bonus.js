@@ -12,7 +12,7 @@ require("dotenv").config(); //Da bi se PORT prilagodio public reilway
 
 
 // ================== GET: svi bonusi ==================
-router.get('/bonus', (req, res) => {
+router.get('/', (req, res) => {
     const query = `
        SELECT 
     b.bns_id,
@@ -37,7 +37,7 @@ ORDER BY b.bns_id;
 });
 
 // ================== POST: dodavanje novog bonusa ==================
-router.post('/bonus', (req, res) => {
+router.post('/', (req, res) => {
     const { fk_bns_nar_id, fk_bns_pro_id, fk_bns_stv_id, bns_popust } = req.body;
 
     // Provera obaveznih polja

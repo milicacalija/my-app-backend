@@ -5,7 +5,7 @@ const logger = require('./logger');
 
 
 // 1️⃣ Vraća sve piktograme
-router.get("/piktogrami", (req, res) => {
+router.get("/", (req, res) => {
     const search = req.query.search;
     let query = "SELECT * FROM piktogrami";
     let params = [];
@@ -25,7 +25,7 @@ router.get("/piktogrami", (req, res) => {
 });
 
 // 2️⃣ Vraća proizvode za selektovani piktogram
-router.get("/piktogrami/proizvodi", (req, res) => {
+router.get("/proizvodi", (req, res) => {
     const pktId = req.query.piktogram;
 
     if (!pktId) {

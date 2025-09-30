@@ -16,7 +16,7 @@ const cors = require('cors'); // <---- OVO DODAJES
 
 
 // Dohvatanje svih narudžbenica sa podacima o korisniku
-router.get('/narudzbenice', (req, res) => {
+router.get('/', (req, res) => {
     const query = `
  SELECT 
       narudzbenice.nar_id,
@@ -86,7 +86,7 @@ res.json(Object.values(narudzbeniceMap));
         
 /*Hocu da podatke prikazem sa baze na frontendu, npr tabela kompanije, komuniciramo sa appijem preko GET metode*/
 
-router.get('/narudzbenice/:nar_id', (req, res) => {
+router.get('/:nar_id', (req, res) => {
     const { nar_id } = req.params;
 
     if (!nar_id) {
@@ -268,7 +268,7 @@ async function sendOrderPDFEmail(toEmail, orderData) {
 
 
 
-router.post('/narudzbenice', async (req, res) => {
+router.post('/', async (req, res) => {
   const { fk_nar_usr_id, nar_datum, nar_cena, nac_plat, stavke = [] } = req.body;
 
   if (!fk_nar_usr_id || !nar_datum || !nar_cena || !nac_plat) {
@@ -409,7 +409,7 @@ router.post('/narudzbenice', async (req, res) => {
   }
 });
 
-router.put('/narudzbenice/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     const { id } = req.params;
     const { fk_nar_user_id, fk_nar_kmp_id, nar_cena } = req.body;
     const nar_datum = moment().tz('Europe/Belgrade').format('YYYY-MM-DD HH:mm:ss');
@@ -459,7 +459,7 @@ router.put('/narudzbenice/:id', (req, res) => {
 
 /*APPI pozovemo za brisnje*/
 
-router.delete("/narudzbenice", function(req, res){
+router.delete("/", function(req, res){
   const id = req.query.id;
 
   // 1. Obriši sve stavke narudžbenice

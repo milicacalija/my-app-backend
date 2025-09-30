@@ -31,7 +31,7 @@ router.get("/proizvodi", function(req, res) {
 });
 
 // GET metoda za prikazivanje tipova primene na osnovu pro_id
-router.get('/tipoviprimene', function(req, res) {
+router.get('/', function(req, res) {
     const search = req.query.search;
     //Jako vazan sql upit, da povezemo tabele da bi se pravilno pro id ucitavao
     const query = `
@@ -55,7 +55,7 @@ router.get('/tipoviprimene', function(req, res) {
 
 /*Nakon sto smo ubacili podatke u tabelu kompanije, preko frontenda, sad treba poslati infotmacije backendu to sto smo uneli u input, ovo se inace zovu restfull APPIJI, to znaci da mi pravimo dogovor kakvu zelimo putanju da komunicira sa bazom preko koje metode i sta nam ta metoda vraca, to je ona glavna razlika izmedju GET i POST metode, GET dobijamo podatke a POST pravi podatke, npr PUT metoda mozemo iskoristiti da izmenimo podatke ali msm da u ovom trenutku za moju bazu to nece biti potrebno, mozda cu iskoristiti za proizvode kad budem kreirala prodavnicu, ako mi bude zatrebao taj deo imam na predvanju DATA ACESS /4/4 posle 2.20h, vervatno cu koristiti za tabelu proizvodi!*/
 
-router.post ("/tipoviprimene", function(req,res){
+router.post ("/", function(req,res){
     /*Sad treba da primimo json, da hvatamo podatke*/
     var naziv = req.body.naziv; /*dakle slacemo zahtev pod imenom pib, pod ne query nego body zahtevom, zato sto post ima body za razliku od geta koji nema, getom mozemo samo slati upite u search baru pod ? dok kod post metode to mozemo preko body*/
 
@@ -78,7 +78,7 @@ router.post ("/tipoviprimene", function(req,res){
 
 /*Napravicemo jednu metodu za izmenu podataka iz baze na frontendu, metoda put*/
 
-router.put("/tipoviprimene", function(req,res){
+router.put("/", function(req,res){
     /*Da bi mogli uspesno da izmeni podatak, treba nam id, da znamo koga menjamo i od toga pocinjemo*/
     var id = req.body.id;
     /*Prekopiramo sve prethodne zahteve*/
@@ -89,7 +89,11 @@ router.put("/tipoviprimene", function(req,res){
 
     db.query("UPDATE tipoviprimene SET tpr_naziv=? WHERE tpr_id=?",[naziv, id], 
 function(err,results,fields) {
-    if(err) throw err;
+    if (err) {
+  logger.error(err);
+  return res.status(500).json({ error: "Greška pri upitu" });
+}
+
     logger.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
@@ -101,7 +105,7 @@ function(err,results,fields) {
 
 /*APPI pozovemo za brisnje*/
 
-router.delete("/tipoviprimene", function(req,res){
+router.delete("/", function(req,res){
     /*Problem sa specifikacijom za DELETE, pa umseto body poslacemo podatke preko URL, tj query*/
 var id= req.query.id;
 /*Imala sam gresku sa upitom u smislu nije hteo da mi obrise zato sto u sintaksi nisam imala zarez na kraju upitnika , kad se obrise komapnija, server tu infromaciju ne komentarise*/
