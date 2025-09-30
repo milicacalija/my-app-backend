@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require('./database'); // import konekcije
 const logger = require('./logger');
 
-app.use(express.json());
 
 // 1️⃣ Vraća sve piktograme
 router.get("/piktogrami", (req, res) => {

@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require('./database'); // import konekcije
 const logger = require('./logger');
 
-app.use(express.json());
 
 
 router.get('/', (req, res) => {

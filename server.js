@@ -5,7 +5,6 @@ const logger = require('./logger');
 // Uvoz ruta
 const nalogRoutes = require('./nalog'); // rute za korisnike
 const porukeRouter = require('./poruke'); // rute za poruke
-app.use(express.json());
 
 // Test ruta
 router.get("/", (req, res) => {

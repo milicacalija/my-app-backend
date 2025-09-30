@@ -1,30 +1,29 @@
-// logger.js
 let logCounter = 0;
 
 const logger = {
   log: (...args) => {
     // Development: loguj sve
     if (process.env.NODE_ENV !== 'production') {
-      logger.log(...args);
+      console.log(...args); // ✅ console.log, ne logger.log
       return;
     }
 
     // Production: loguj samo 1 od 50 puta
     logCounter++;
     if (logCounter % 50 === 0) {
-      logger.log(...args);
+      console.log(...args); // ✅ console.log
     }
   },
 
   error: (...args) => {
     // Greške uvek loguj, i u produkciji
-    logger.error(...args);
+    console.error(...args); // ✅ console.error
   },
 
   info: (...args) => {
-    // Informacije: loguj samo u dev ili retko u prod
+    // Informacije: loguj samo u dev
     if (process.env.NODE_ENV !== 'production') {
-      console.info(...args);
+      console.info(...args); // ✅ console.info
     }
   }
 };
