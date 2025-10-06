@@ -7,7 +7,7 @@ const cors = require('cors');
 const db = require('./db.local.js'); // konekcija na bazu
 const stripe = require('./stripe'); // samo koristiš ga direktno, bez app.use()
 const app = express();
-app.use(cors());
+
 app.use(express.json());
 
 // ...ostatak koda
