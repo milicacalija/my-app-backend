@@ -66,7 +66,7 @@ app.use("/admin", adminRoutes);
 
 
 // Start servera
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3016;
 app.listen(PORT, () => {
     console.log(`✅ Server pokrenut na portu ${PORT}`);
 });
