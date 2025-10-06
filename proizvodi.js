@@ -1,9 +1,7 @@
 /*Povezivanje NOde sa MySql*, posle toga kazemo db .dbect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console dbected*/
 const express = require('express');
 const router = express.Router();
-const db = require('./database'); // import konekcije
-const logger = require('./logger');
-
+const db = require('./db.local'); // ovo mora biti konekcija
 
 router.get("/:id", function(req, res) {
   const id = req.params.id;
@@ -36,7 +34,7 @@ if (search === undefined) {
     `;
     db.query(query, function (err, results) {
         if (err) {
-  logger.error(err);
+  console.error(err);
   return res.status(500).json({ error: "Greška pri upitu" });
 }
 
@@ -63,7 +61,7 @@ db.query(query, ["%" + search + "%", "%" + search + "%"], function (err, results
             
             
 router.post("/", function(req, res) {
-  logger.log("📥 Request body:", req.body);
+  console.log("📥 Request body:", req.body);
 
 
   const sql = `
@@ -86,7 +84,7 @@ const values = [
 
 db.query(sql, values, (err, result) => {
   if (err) {
-    logger.error("❌ Greška u INSERT upitu:", err);
+    console.error("❌ Greška u INSERT upitu:", err);
     return res.status(500).json({ error: "Greška pri upisu u bazu" });
   }
   res.json({ message: "Proizvod uspešno dodat", id: result.insertId });
@@ -114,10 +112,10 @@ db.query(
   [iupac, cena, kolicina, jedinicamere, rok, lager, tip, id],
   function(err, results) {
     if (err) {
-      logger.error(err);
+      console.error(err);
       return res.status(500).json({ error: "Greška pri upitu" });
     }
-    logger.log(results);
+    console.log(results);
     res.json({ "Result": "OK" });
   }
 );
@@ -133,7 +131,7 @@ var id= req.query.id;
 db.query("DELETE FROM proizvodi WHERE pro_id=?",[id],
 function(err,result,fields){
     if (err) {
-  logger.error(err);
+  console.error(err);
   return res.status(500).json({ error: "Greška pri upitu" });
 }
     res.json({"Result":"OK"});

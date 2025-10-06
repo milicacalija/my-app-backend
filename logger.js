@@ -1,10 +1,10 @@
 let logCounter = 0;
 
-const logger = {
+ console.log = {
   log: (...args) => {
     // Development: loguj sve
     if (process.env.NODE_ENV !== 'production') {
-      console.log(...args); // ✅ console.log, ne logger.log
+      console.log(...args); // ✅ console.log, ne console.log
       return;
     }
 
@@ -28,4 +28,4 @@ const logger = {
   }
 };
 
-module.exports = logger;
+module.exports = console.log;

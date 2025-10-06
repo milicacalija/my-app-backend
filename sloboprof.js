@@ -22,7 +22,7 @@ router.get('/sloboprof', (req, res) => {
 
     db.query(query, (error, results) => {
         if (error) {
-            logger.error('Greška pri izvršavanju upita: ', error);
+            console.error('Greška pri izvršavanju upita: ', error);
             res.status(500).send('Greška pri dobavljanju podataka');
         } else {
             res.json(results);
@@ -32,5 +32,5 @@ router.get('/sloboprof', (req, res) => {
 
 // Pokretanje servera
 app.listen(port, () => {
-    logger.log(`Server je pokrenut na portu ${port}`);
+    console.log(`Server je pokrenut na portu ${port}`);
 });

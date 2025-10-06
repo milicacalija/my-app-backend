@@ -1,9 +1,7 @@
 // bonus.js
 const express = require('express');
-const db = require('./database'); // konekcija iz database.js
-const cors = require('cors');
+const db = require('./db.local'); // ovo mora biti konekcijaconst cors = require('cors');
 const router = express.Router();
-const logger = require('./logger');
 
 require("dotenv").config(); //Da bi se PORT prilagodio public reilway
 // Kreiramo pool konekciju (stabilnije za više zahteva)
@@ -29,7 +27,7 @@ ORDER BY b.bns_id;
 
     db.query(query, (err, results) => {
         if (err) {
-            logger.error('Greška prilikom GET bonus:', err);
+            console.error('Greška prilikom GET bonus:', err);
             return res.status(500).json({ error: err });
         }
         res.json({ data: results });
@@ -56,7 +54,7 @@ router.post('/', (req, res) => {
         [fk_bns_nar_id, fk_bns_pro_id || null, fk_bns_stv_id || null, bns_popust],
         (err, result) => {
             if (err) {
-                logger.error('Greška prilikom POST bonus:', err);
+                console.error('Greška prilikom POST bonus:', err);
                 return res.status(500).json({ error: err });
             }
             res.json({ message: 'Bonus uspešno dodat!', bonusId: result.insertId });

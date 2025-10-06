@@ -1,9 +1,7 @@
 /*Povezivanje NOde sa MySql*, posle toga kazemo db .dbect damo f-ju i ako nesto pukne da nam izbaci exception , time ce se server srusiti, ali znamo zasto,  ili ako je sve u redu da ispise u console dbected*/
 const express = require('express');
 const router = express.Router();
-const db = require('./database'); // import konekcije
-const logger = require('./logger');
-
+const db = require('./db.local'); // ovo mora biti konekcija
 
 router.get("/", function(req,res){
 
@@ -22,7 +20,7 @@ var search = req.query.search;
     else{
         db.query("SELECT * FROM specifikacije WHERE spe_ izgled LIKE ? OR spe_klashemikal LIKE ? ",["%"+search+"%", "%"+search+"%"],function(err,results,fields){
             if (err) {
-  logger.error(err);
+  console.error(err);
   return res.status(500).json({ error: "Greška pri upitu" });
 }
 
@@ -45,11 +43,11 @@ var search = req.query.search;
     db.query("INSERT INTO specifikacije SET spe_izgled=?, spe_klashemikal=?, spe_prvapomoc =?,spe_ruksklad=?",[izgled, klashemikal, prvapomoc, ruksklad],
     function(err,results,fields) {
         if (err) {
-  logger.error(err);
+  console.error(err);
   return res.status(500).json({ error: "Greška pri upitu" });
 }
 
-        logger.log(results);
+        console.log(results);
        
     }) ;
 
@@ -77,11 +75,11 @@ function(err,results,fields) {
     //if err throw err moze srusiti ceo sistem, umesto toga ide
    if (err) {
 
-  logger.error(err);
+  console.error(err);
   return res.status(500).json({ error: "Greška pri upitu" });
 }
 
-    logger.log(results);
+    console.log(results);
     /*Results nam nije toliko bitno sada, ali ono sto nam je bitno kad se sve zavrsi da vratimo rezultat*/
     res.json ({"Result": "OK"});
 }) ;
@@ -97,7 +95,7 @@ var id= req.query.id;
 db.query("DELETE FROM specifikacije WHERE spe_id=?",[id],
 function(err,result,fields){
     if (err) {
-  logger.error(err);
+  console.error(err);
   return res.status(500).json({ error: "Greška pri upitu" });
 }
 

@@ -1,7 +1,6 @@
 // server.js
 const express = require('express');
 const router = express.Router(); // Kreiramo router
-const logger = require('./logger');
 // Uvoz ruta
 const nalogRoutes = require('./nalog'); // rute za korisnike
 const porukeRouter = require('./poruke'); // rute za poruke

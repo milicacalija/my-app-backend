@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./database'); // import konekcije
-const logger = require('./logger');
-
+const db = require('./db.local'); // ovo mora biti konekcija
 // Test ruta
 router.get('/', (req, res) => {
   res.json({ message: 'Ruta /nalog radi!' });

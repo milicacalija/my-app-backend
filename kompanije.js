@@ -1,9 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const db = require('./database'); // import konekcije
-const logger = require('./logger');
-
+const db = require('./db.local'); // ovo mora biti konekcija
 
 
 
@@ -22,7 +20,7 @@ router.get("/", (req,res) => {
 
     db.query(sql, params, (err, results) => {
         if(err) {
-            logger.error(err);
+            console.error(err);
             return res.status(500).json({ error: "Greška pri upitu" });
         }
         res.json({ data: results });
@@ -52,11 +50,11 @@ router.post("/", function(req, res){
     [pib, naziv, adresa, telefon, email, osoba], 
     function(err, results) {
       if(err) {
-        logger.error(err);
+        console.error(err);
         return res.status(500).json({ message: "Greška pri upisu kompanije" });
       }
 
-      logger.log("Kompanija dodata:", results);
+      console.log("Kompanija dodata:", results);
       res.json({ message: "Kompanija uspešno dodata!", id: results.insertId });
     }
   );

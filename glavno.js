@@ -1,28 +1,30 @@
 
+require('dotenv').config(); // ovo mora biti na vrhu
+
 const express = require('express');
 const session = require('express-session');
-const cors = require("cors");
-require('dotenv').config(); // ucitava .env
-const db = require('./database'); // putanja do tvog database.js
-const logger = require('./logger');
-
+const cors = require('cors');
+const db = require('./db.local.js'); // konekcija na bazu
+const stripe = require('./stripe'); // samo koristiš ga direktno, bez app.use()
 const app = express();
+app.use(cors());
 app.use(express.json());
 
+// ...ostatak koda
 
-// Middlewares
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use(session({
-    secret: 'moja_tajna_sifra', // session secret
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
+// 🔹 CORS konfiguracija — DOZVOLJAVA FRONT SA RAILWAY-A
+app.use(cors({
+  origin: ['https://my-front-production.up.railway.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
+//Middleware za sesije
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
 
 // Stripe ključ (za Stripe biblioteke)
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-// Importovanje ruta
+
 const kompanijeRoutes = require("./kompanije");
 const narudzbeniceRoutes = require("./narudzbenice");
 const piktogramiRoutes = require("./piktogrami");
@@ -34,9 +36,13 @@ const usersRoutes = require("./users");
 const loginRoutes = require("./login");
 const nalogRoutes = require("./nalog");
 const stripeRoutes = require("./stripe");
+const paymentRouter = require('./payment');
+
+
 const porukeRoutes = require("./poruke");
 const serverPorukeRoutes = require("./serverPoruke");
 const bonusRoutes = require("./bonus");
+const adminRoutes = require("./admin");
 
 // Postavljanje ruta
 app.use("/kompanije", kompanijeRoutes);
@@ -49,13 +55,18 @@ app.use("/proizvodi", proizvodiRoutes);
 app.use("/users", usersRoutes);
 app.use("/login", loginRoutes);
 app.use("/nalog", nalogRoutes);
-app.use("/stripe", stripeRoutes);
-app.use("/poruke", porukeRoutes);
+app.use('/', paymentRouter); // tada ruta /save-payment postoji direktnoapp.use("/poruke", porukeRoutes);
 app.use("/serverPoruke", serverPorukeRoutes);
+app.use("/poruke", porukeRoutes);
 app.use("/bonus", bonusRoutes);
+app.use("/admin", adminRoutes);
+
+
+
+
 
 // Start servera
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    logger.log(`✅ Server pokrenut na portu ${PORT}`);
+    console.log(`✅ Server pokrenut na portu ${PORT}`);
 });

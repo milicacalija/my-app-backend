@@ -1,17 +1,20 @@
 /*Na pocetku mi je izbacivalo gresku cors is not defined, zato sto uopste nisam definisala promenljivu cors, a kad izbaci gresku module not found to znaci da cors paket treba instalirati */
 const express = require('express');
 const router = express.Router();
-const db = require('./database'); // import konekcije
-const logger = require('./logger');
-
-
+const db = require('./db.local'); // ovo mora biti konekcija
+const jwt = require('jsonwebtoken');
 
 // Primena CORS middleware samo na određene rute
 
 
+//Zašticena admin ruta
 
-
-
+router.get("/admin/users", adminAuth, (req, res) => {
+  conn.query("SELECT * FROM users", (err, rows) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(rows);
+  });
+});
 // Middleware za admin
 // ========================
 function adminAuth(req, res, next) {
@@ -51,11 +54,11 @@ router.post("/", (req, res) => {
     [email, password],
     (err, rows, fields) => {
       if (err) {
-        logger.error('Greška prilikom izvršavanja SQL upita:', err);
+        console.error('Greška prilikom izvršavanja SQL upita:', err);
         res.status(500).json({"Result": "ERR", "Message": "Internal Server Error"});
         return;
       }
-      logger.log('Rows from database:', rows);
+      console.log('Rows from database:', rows);
 
       if (rows.length === 0) {
         res.status(401).json({"Result": "ERR", "Message": "Invalid credentials"});
@@ -78,19 +81,14 @@ router.post("/", (req, res) => {
       
 
     res.json({"Result": "OK", "data": user, "token": token});
-      logger.log('Login uspešan, token poslat');
+      console.log('Login uspešan, token poslat');
         
       });
     }
   );
   // Zaštićena admin ruta primer
 // ========================
-router.get("/admin/users", adminAuth, (req, res) => {
-  db.query("SELECT * FROM users", (err, rows) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(rows);
-  });
-});
+
 
 module.exports = router;
 
