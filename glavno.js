@@ -8,19 +8,16 @@ const db = require('./db.local.js'); // konekcija na bazu
 const stripe = require('./stripe'); // samo koristiš ga direktno, bez app.use()
 const app = express();
 
-app.use(express.json());
-
-// ...ostatak koda
-
-// 🔹 CORS konfiguracija — DOZVOLJAVA FRONT SA RAILWAY-A
-app.use(cors({
-  origin: ['https://my-front-production.up.railway.app'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
-//Middleware za sesije
+// Limit za body
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// 🔹 CORS - pre svih ruta
+app.use(cors({
+  origin: ['https://my-front-production.up.railway.app'],
+  methods: ['GET','POST','PUT','DELETE'],
+  credentials: true
+}));
 
 
 // Stripe ključ (za Stripe biblioteke)
