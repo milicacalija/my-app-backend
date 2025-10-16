@@ -13,11 +13,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // 🔹 CORS - pre svih ruta
-app.use(cors({
-  origin: ['https://my-front-production.up.railway.app'],
-  methods: ['GET','POST','PUT','DELETE'],
-  credentials: true
-}));
+// 🔹 CORS - pre svih ruta
+app.use(cors()); // dozvoljava sve domene i metode
 
 
 // Stripe ključ (za Stripe biblioteke)
